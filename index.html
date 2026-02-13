@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cupid's Radio</title>
     
-    <!-- React & ReactDOM (Stable Versions) -->
+    <!-- React & ReactDOM -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
     
@@ -16,7 +16,6 @@
         :root {
             --bg: #fdfbf7;
             --red: #8B0000;
-            --red-light: #a62b2b;
             --paper: #fffef8;
         }
 
@@ -54,31 +53,19 @@
             text-align: center;
         }
 
-        /* --- CUTE HEART PLAY BUTTON --- */
-        .heart-play-container {
-            display: flex; justify-content: center; margin: 15px 0;
-        }
+        /* Heart Play Button */
+        .heart-play-container { display: flex; justify-content: center; margin: 15px 0; }
         
         .heart-btn {
-            background: var(--red);
-            color: white;
-            width: 140px;
-            padding: 12px 20px;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
+            background: var(--red); color: white; width: 140px; padding: 12px 20px;
+            border-radius: 50px; border: none; cursor: pointer;
             box-shadow: 0 6px 15px rgba(139,0,0,0.3);
             display: flex; align-items: center; justify-content: center; gap: 8px;
             font-family: inherit; font-weight: bold; font-size: 16px;
-            transition: transform 0.2s, background 0.2s;
+            transition: transform 0.2s;
         }
-        
         .heart-btn:active { transform: scale(0.95); }
-        
-        .heart-btn.playing {
-            background: #ff4d4d;
-            animation: pulse-heart 1.5s infinite;
-        }
+        .heart-btn.playing { background: #ff4d4d; animation: pulse-heart 1.5s infinite; }
 
         @keyframes pulse-heart {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
@@ -86,27 +73,21 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
         }
 
-        /* --- RECORDING BUTTON --- */
+        /* Record Button */
         .record-btn {
-            background: white; border: 2px solid var(--red);
-            color: var(--red); padding: 12px 24px; border-radius: 50px;
-            font-weight: bold; font-size: 14px; cursor: pointer;
-            display: flex; align-items: center; gap: 8px; margin: 0 auto;
+            background: white; border: 2px solid var(--red); color: var(--red);
+            padding: 12px 24px; border-radius: 50px; font-weight: bold; font-size: 14px;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 0 auto;
             transition: all 0.2s;
         }
-        .record-btn.recording {
-            background: var(--red); color: white;
-            animation: pulse-red 2s infinite;
-        }
+        .record-btn.recording { background: var(--red); color: white; animation: pulse-red 2s infinite; }
         
-        /* Main Action Buttons (Seal/Share) */
+        /* Action Buttons */
         .btn-action {
-            background: var(--red); color: white; border: none;
-            padding: 16px; border-radius: 50px;
-            font-size: 16px; font-weight: bold; width: 100%;
+            background: var(--red); color: white; border: none; padding: 16px;
+            border-radius: 50px; font-size: 16px; font-weight: bold; width: 100%;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 10px rgba(139, 0, 0, 0.2);
-            transition: transform 0.1s;
+            box-shadow: 0 4px 10px rgba(139, 0, 0, 0.2); transition: transform 0.1s;
         }
         .btn-action:active { transform: scale(0.97); }
 
@@ -118,12 +99,11 @@
         }
 
         .header-cute {
-            font-size: 12px; font-weight: bold; color: #888;
-            margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px;
+            font-size: 12px; font-weight: bold; color: #888; margin-bottom: 15px;
+            text-transform: uppercase; letter-spacing: 2px;
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        
-        /* Loader / Error */
+
         #loader { position: fixed; inset: 0; background: var(--bg); z-index: 99; display: flex; justify-content: center; align-items: center; color: var(--red); font-weight: bold; }
         #error-log { display: none; position: fixed; top: 0; left: 0; width: 100%; background: black; color: #ff5555; padding: 20px; font-size: 12px; z-index: 9999; }
     </style>
@@ -135,7 +115,6 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // --- ERROR HANDLER ---
         window.onerror = function(msg, url, line) {
             const el = document.getElementById('error-log');
             el.style.display = 'block';
@@ -145,7 +124,6 @@
 
         const { useState, useRef, useEffect } = React;
 
-        // Hide loader when React starts
         setTimeout(() => {
             const loader = document.getElementById('loader');
             if(loader) loader.style.display = 'none';
@@ -160,15 +138,11 @@
                 lock: <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />,
                 play: <polygon points="5 3 19 12 5 21 5 3" />,
                 stop: <rect x="6" y="6" width="12" height="12" rx="2" />,
-                // Custom Heart-Note Symbol
                 music_cute: (
                     <g transform="translate(2, 2)">
-                        {/* Music Note Stem */}
                         <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        {/* Note Heads */}
                         <circle cx="6" cy="18" r="3.5" fill="currentColor" />
                         <circle cx="21" cy="16" r="3.5" fill="currentColor" />
-                        {/* Cute Heart on Stem */}
                         <path d="M6 3 C6 1 8 1 9 2.5 C10 1 12 1 12 3 C12 5.5 9 7.5 9 7.5 C9 7.5 6 5.5 6 3 Z" fill="currentColor" transform="translate(-1, 0) rotate(-15)" />
                     </g>
                 )
@@ -176,7 +150,7 @@
             return <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{overflow:'visible'}}>{icons[name]}</svg>;
         };
 
-        // --- RADIO PLAYER (CUTE VERSION) ---
+        // --- RADIO PLAYER ---
         const RadioPlayer = ({ audioBlob }) => {
             const [isPlaying, setIsPlaying] = useState(false);
             const audioCtxRef = useRef(null);
@@ -187,7 +161,6 @@
                     setIsPlaying(false);
                     return;
                 }
-
                 try {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     const ctx = new AudioContext();
@@ -199,25 +172,21 @@
                     const source = ctx.createBufferSource();
                     source.buffer = audioBuffer;
 
-                    // Radio Effects
                     const highpass = ctx.createBiquadFilter(); highpass.type = "highpass"; highpass.frequency.value = 600;
                     const lowpass = ctx.createBiquadFilter(); lowpass.type = "lowpass"; lowpass.frequency.value = 3000;
                     const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20;
                     
                     source.connect(highpass); highpass.connect(lowpass); lowpass.connect(comp); comp.connect(ctx.destination);
-                    
                     source.start(0);
                     setIsPlaying(true);
                     source.onended = () => setIsPlaying(false);
                 } catch(e) {
-                    // Fallback for simple playback
                     const audio = new Audio(URL.createObjectURL(audioBlob));
                     audio.play();
                     setIsPlaying(true);
                     audio.onended = () => setIsPlaying(false);
                 }
             };
-
             return (
                 <div className="heart-play-container">
                     <button className={`heart-btn ${isPlaying ? 'playing' : ''}`} onClick={play}>
@@ -226,6 +195,28 @@
                     </button>
                 </div>
             );
+        };
+
+        // --- CRYPTO HELPERS (EMOJI SAFE) ---
+        const encryptText = (text, pass) => {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const key = encoder.encode(pass);
+            const encrypted = data.map((byte, i) => byte ^ key[i % key.length]);
+            let binary = '';
+            for (let i = 0; i < encrypted.length; i++) binary += String.fromCharCode(encrypted[i]);
+            return btoa(binary);
+        };
+
+        const decryptText = (base64, pass) => {
+            const binaryStr = atob(base64);
+            const data = new Uint8Array(binaryStr.length);
+            for(let i=0; i<binaryStr.length; i++) data[i] = binaryStr.charCodeAt(i);
+            const encoder = new TextEncoder();
+            const key = encoder.encode(pass);
+            const decrypted = data.map((byte, i) => byte ^ key[i % key.length]);
+            const decoder = new TextDecoder();
+            return decoder.decode(decrypted);
         };
 
         // --- APP ---
@@ -238,11 +229,10 @@
             const [shareFile, setShareFile] = useState(null);
             const [receivedData, setReceivedData] = useState(null);
             const [unlockCode, setUnlockCode] = useState("");
-
             const mediaRecorder = useRef(null);
             const chunks = useRef([]);
 
-            // Recording
+            // Universal Recording
             const toggleRecording = async () => {
                 if(isRecording) {
                     if(mediaRecorder.current) mediaRecorder.current.stop();
@@ -250,38 +240,38 @@
                 } else {
                     try {
                         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        mediaRecorder.current = new MediaRecorder(stream);
+                        // Check supported types
+                        let options = {};
+                        if (MediaRecorder.isTypeSupported('audio/webm')) options = { mimeType: 'audio/webm' };
+                        else if (MediaRecorder.isTypeSupported('audio/mp4')) options = { mimeType: 'audio/mp4' };
+                        
+                        mediaRecorder.current = new MediaRecorder(stream, options);
                         mediaRecorder.current.ondataavailable = e => { if(e.data.size > 0) chunks.current.push(e.data); };
                         mediaRecorder.current.onstop = () => {
-                            // iPhone safe blob
-                            const blob = new Blob(chunks.current, { type: 'audio/mp4' });
+                            const blob = new Blob(chunks.current, { type: chunks.current[0].type });
                             setAudioBlob(blob);
                             stream.getTracks().forEach(t => t.stop());
                         };
                         chunks.current = [];
                         mediaRecorder.current.start();
                         setIsRecording(true);
-                    } catch(e) {
-                        alert("Microphone access needed!");
-                    }
+                    } catch(e) { alert("Microphone access needed!"); }
                 }
             };
 
-            // Seal
             const seal = () => {
                 if(!code || (!audioBlob && !letter)) return alert("Missing content or code!");
                 const reader = new FileReader();
                 reader.readAsDataURL(audioBlob || new Blob([]));
                 reader.onloadend = () => {
+                    // Emoji-safe encryption
                     const payload = JSON.stringify({ t: letter, a: reader.result });
-                    let enc = "";
-                    for(let i=0; i<payload.length; i++) enc += String.fromCharCode(payload.charCodeAt(i) ^ code.toUpperCase().charCodeAt(i % code.length));
-                    const file = new File([JSON.stringify({ app:"cupid", d: btoa(enc) })], "Cupid_Signal.json", { type: "application/json" });
+                    const enc = encryptText(payload, code.toUpperCase());
+                    const file = new File([JSON.stringify({ app:"cupid", d: enc })], "Cupid_Signal.json", { type: "application/json" });
                     setShareFile(file);
                 };
             };
 
-            // Share
             const share = async () => {
                 if(navigator.canShare && navigator.canShare({ files: [shareFile] })) {
                     try { await navigator.share({ files: [shareFile], title: 'Valentine', text: `Code: ${code}` }); } catch(e) {}
@@ -290,7 +280,6 @@
                 }
             };
 
-            // Receive
             const upload = (e) => {
                 const f = e.target.files[0]; if(!f) return;
                 const r = new FileReader();
@@ -300,15 +289,12 @@
 
             const unlock = () => {
                 try {
-                    const raw = atob(receivedData);
-                    let dec = "";
-                    for(let i=0; i<raw.length; i++) dec += String.fromCharCode(raw.charCodeAt(i) ^ unlockCode.toUpperCase().charCodeAt(i % unlockCode.length));
+                    const dec = decryptText(receivedData, unlockCode.toUpperCase());
                     const data = JSON.parse(dec);
                     fetch(data.a).then(r=>r.blob()).then(b=>{ setAudioBlob(b); setLetter(data.t); setView('read'); });
                 } catch(e) { alert("Wrong Code"); }
             };
 
-            // --- VIEWS ---
             if(view === 'home') return (
                 <div className="screen" style={{justifyContent:'center'}}>
                     <div className="card">
@@ -329,13 +315,8 @@
                         <span style={{flex:1, textAlign:'center', fontWeight:'bold', color:'var(--red)'}}>COMPOSE</span>
                         <div style={{width:40}}></div>
                     </div>
-
                     <div className="card">
-                        <div className="header-cute"> 
-                            Voice Note 
-                            {/* Beautiful Dark Red Heart-Note Symbol */}
-                            <Icon name="music_cute" color="#8B0000" />
-                        </div>
+                        <div className="header-cute"> Voice Note <Icon name="music_cute" color="#8B0000" /> </div>
                         {!audioBlob ? (
                             <button className={`record-btn ${isRecording ? 'recording' : ''}`} onClick={toggleRecording}>
                                 <Icon name={isRecording ? "stop" : "mic"} />
@@ -348,11 +329,9 @@
                             </div>
                         )}
                     </div>
-
                     <div className="card" style={{padding:15}}>
                         <textarea placeholder="Write your letter here..." value={letter} onChange={e => setLetter(e.target.value)} />
                     </div>
-
                     <div className="card" style={{background:'var(--red)', color:'white'}}>
                         {!shareFile ? (
                             <>
@@ -392,10 +371,7 @@
                     <button onClick={() => setView('home')} style={{marginBottom:20, background:'none', border:'none', color:'var(--red)'}}>CLOSE</button>
                     {audioBlob && (
                         <div className="card">
-                            <div className="header-cute"> 
-                                Incoming Voice 
-                                <Icon name="music_cute" color="#8B0000" />
-                            </div>
+                            <div className="header-cute"> Incoming Voice <Icon name="music_cute" color="#8B0000" /> </div>
                             <RadioPlayer audioBlob={audioBlob} />
                         </div>
                     )}
@@ -405,7 +381,6 @@
                     </div>
                 </div>
             );
-
             return null;
         };
 
