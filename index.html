@@ -287,18 +287,61 @@
             };
 
             const share = async () => {
-                // Try native share first
-                if(navigator.canShare && navigator.canShare({ files: [shareFile] })) {
-                    try { 
-                        await navigator.share({ files: [shareFile], title: 'Valentine', text: `Code: ${code}` }); 
-                    } catch(e) {
-                        // If user cancelled, do nothing. If share failed systematically, download.
-                        if (e.name !== 'AbortError') triggerDownload();
+                // Detect HTTPS context
+                const isHTTPS = window.location.protocol === 'https:';
+                
+                // Safe feature detection for Web Share API
+                const hasNavigatorShare = typeof navigator !== 'undefined' && 'share' in navigator;
+                const hasCanShare = hasNavigatorShare && typeof navigator.canShare === 'function';
+                
+                let canShareFiles = false;
+                
+                // Try to check if we can share files (with error handling for browsers that don't support canShare)
+                if (hasCanShare) {
+                    try {
+                        canShareFiles = navigator.canShare({ files: [shareFile] });
+                    } catch (e) {
+                        // Some browsers throw errors when checking canShare
+                        // Fall back to checking if share exists (we'll try sharing and handle errors)
+                        canShareFiles = false;
                     }
-                } else {
-                    // Fallback to download
-                    triggerDownload();
                 }
+                
+                // Attempt native share if conditions are met
+                if (hasNavigatorShare && (canShareFiles || !hasCanShare)) {
+                    try {
+                        // Try to share with all data
+                        await navigator.share({ 
+                            files: [shareFile], 
+                            title: 'Valentine Message', 
+                            text: `Unlock with code: ${code}` 
+                        });
+                        // Success - share was completed (or could have been cancelled by user choosing "cancel")
+                        return;
+                    } catch (e) {
+                        // Handle different error types
+                        if (e.name === 'AbortError') {
+                            // User cancelled the share dialog - this is normal, do nothing
+                            return;
+                        } else if (e.name === 'NotAllowedError') {
+                            // Permission denied or HTTPS required
+                            if (!isHTTPS) {
+                                alert('File sharing requires HTTPS. Downloading file instead.');
+                            }
+                            // Fall through to download
+                        } else if (e.name === 'TypeError' || e.name === 'NotSupportedError') {
+                            // Browser doesn't support file sharing or the file type
+                            // Fall through to download silently
+                        } else {
+                            // Other errors - log for debugging in development
+                            console.warn('Share failed:', e.name, e.message);
+                            // Fall through to download
+                        }
+                    }
+                }
+                
+                // Fallback to download for all cases where share isn't available or failed
+                triggerDownload();
             };
 
             const upload = (e) => {
