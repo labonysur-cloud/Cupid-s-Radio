@@ -19,7 +19,7 @@
 
 <div align="center">
 
-![Cupid's Radio Screenshot](screenshot.png)
+![Cupid's Radio Screenshot](https://github.com/labonysur-cloud/Cupid-s-Radio/blob/main/cupid's%20radio.jpg)
 
 *Create encrypted voice messages and love letters with a beautiful vintage interface*
 
