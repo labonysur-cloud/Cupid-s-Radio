@@ -313,8 +313,8 @@
                         // Try to share with all data
                         await navigator.share({ 
                             files: [shareFile], 
-                            title: 'Valentine Message', 
-                            text: `Unlock with code: ${code}` 
+                            title: 'Valentine', 
+                            text: `Code: ${code}` 
                         });
                         // Success - share was completed (or could have been cancelled by user choosing "cancel")
                         return;
