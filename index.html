@@ -31,6 +31,16 @@
             overflow-x: hidden;
             overflow-y: auto;
             -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* Mobile-specific optimizations */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px);
+                padding-right: max(0px);
+            }
         }
 
         /* Gingham Pattern */
@@ -67,6 +77,8 @@
             text-align: center;
             position: relative;
             /* Ensure stickers position correctly */
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .letter-card-read {
@@ -101,10 +113,19 @@
             font-weight: bold;
             font-size: 16px;
             transition: transform 0.2s;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            min-height: 44px;
+            min-width: 44px;
         }
 
         .heart-btn:active {
             transform: scale(0.95);
+        }
+
+        .heart-btn:focus {
+            outline: 2px solid rgba(139, 0, 0, 0.3);
+            outline-offset: 2px;
         }
 
         .heart-btn.playing {
@@ -144,6 +165,13 @@
             gap: 8px;
             margin: 0 auto;
             transition: all 0.2s;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .record-btn:focus {
+            outline: 2px solid rgba(139, 0, 0, 0.3);
+            outline-offset: 2px;
         }
 
         .record-btn.recording {
@@ -168,10 +196,24 @@
             gap: 8px;
             box-shadow: 0 4px 10px rgba(139, 0, 0, 0.2);
             transition: transform 0.1s;
+            cursor: pointer;
+            min-height: 44px;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .btn-action:active {
             transform: scale(0.97);
+        }
+
+        .btn-action:focus {
+            outline: 2px solid rgba(139, 0, 0, 0.3);
+            outline-offset: 2px;
+        }
+
+        .btn-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         textarea {
@@ -180,11 +222,19 @@
             border: none;
             background: repeating-linear-gradient(transparent, transparent 31px, rgba(139, 0, 0, 0.05) 31px, rgba(139, 0, 0, 0.05) 32px);
             line-height: 32px;
-            font-size: 18px;
+            font-size: 16px;
             outline: none;
             resize: none;
             color: #333;
             font-family: 'Courier New', Courier, monospace;
+            -webkit-user-select: text;
+            -webkit-touch-callout: default;
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            outline: 1px solid rgba(139, 0, 0, 0.2);
+            outline-offset: 2px;
         }
 
         .header-cute {
@@ -297,17 +347,40 @@
             z-index: 100;
             position: relative;
             background-color: rgba(255, 255, 255, 0.01);
-            /* Trick to ensure clicks register */
+            font-size: 16px;
+            /* Prevent mobile zoom on focus */
+            -webkit-user-select: text;
+            -webkit-touch-callout: default;
+        }
+
+        .card-text-input:focus {
+            outline: 1px solid rgba(139, 0, 0, 0.2);
+            outline-offset: 2px;
         }
 
         .card-message {
             font-size: 16px;
             min-height: 60px;
+            min-width: 100%;
         }
 
         .card-from {
             font-size: 14px;
             font-style: italic;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        input[type="password"] {
+            font-size: 16px;
+            /* Prevent mobile zoom on focus */
+        }
+
+        input[type="file"]:focus,
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: 1px solid rgba(139, 0, 0, 0.2);
+            outline-offset: 2px;
         }
 
         .image-upload-btn {
@@ -322,10 +395,19 @@
             align-items: center;
             gap: 10px;
             transition: all 0.2s;
+            min-height: 100px;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
-        .image-upload-btn:hover {
+        .image-upload-btn:hover,
+        .image-upload-btn:active {
             background: rgba(139, 0, 0, 0.05);
+        }
+
+        .image-upload-btn:focus {
+            outline: 2px solid rgba(139, 0, 0, 0.3);
+            outline-offset: 2px;
         }
 
         .card-actions {
@@ -345,10 +427,18 @@
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.1s;
+            min-height: 44px;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .btn-card:active {
             transform: scale(0.97);
+        }
+
+        .btn-card:focus {
+            outline: 1px solid rgba(255, 255, 255, 0.3);
+            outline-offset: 2px;
         }
 
         .btn-card.secondary {
@@ -1288,15 +1378,44 @@
                 if (!canvas) return;
 
                 canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `Cupid_Card_${cardData.from || 'Love'}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
+                    try {
+                        const isAndroid = /Android/i.test(navigator.userAgent);
+                        
+                        if (isAndroid) {
+                            // Android-optimized download
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = url;
+                            a.download = `Cupid_Card_${cardData.from || 'Love'}.png`;
+                            
+                            document.body.appendChild(a);
+                            a.click();
+                            
+                            setTimeout(() => {
+                                try {
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                } catch (e) {
+                                    console.warn('Cleanup error:', e);
+                                }
+                            }, 2000);
+                        } else {
+                            // Desktop approach
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `Cupid_Card_${cardData.from || 'Love'}.png`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }
+                    } catch (error) {
+                        console.error('Download failed:', error);
+                        alert('Download failed. Please try again.');
+                    }
+                }, 'image/png');
             };
 
             const shareCard = async () => {
@@ -1305,18 +1424,36 @@
                 if (!canvas) return;
 
                 canvas.toBlob(async (blob) => {
-                    const file = new File([blob], `Cupid_Card.png`, { type: 'image/png' });
-
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({ files: [file], title: 'Cupid Love Card' });
-                        } catch (e) {
-                            if (e.name !== 'AbortError') downloadCard();
+                    try {
+                        const file = new File([blob], `Cupid_Card.png`, { type: 'image/png' });
+                        const isAndroid = /Android/i.test(navigator.userAgent);
+                        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                        
+                        // Try Web Share API on mobile first
+                        if ((isAndroid || isIOS) && navigator.share && navigator.canShare) {
+                            try {
+                                if (navigator.canShare({ files: [file] })) {
+                                    await navigator.share({
+                                        files: [file],
+                                        title: 'Cupid Love Card',
+                                        text: 'Check out my love card!'
+                                    });
+                                    return;
+                                }
+                            } catch (e) {
+                                if (e.name !== 'AbortError') {
+                                    console.warn('Share failed, falling back to download');
+                                }
+                            }
                         }
-                    } else {
+                        
+                        // Fallback to download
+                        downloadCard();
+                    } catch (error) {
+                        console.error('Share card error:', error);
                         downloadCard();
                     }
-                });
+                }, 'image/png');
             };
 
             const seal = () => {
@@ -1343,77 +1480,124 @@
                 }
             };
 
-            // Android-Proof Download Function
+            // Enhanced Cross-Device Download Function (Android-Optimized)
             const triggerDownload = () => {
-                const url = URL.createObjectURL(shareFile);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = `Valentine_${code}.json`;
-                document.body.appendChild(a); // CRITICAL: Append to body for Android support
-                a.click();
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 100);
+                if (!shareFile) return;
+                
+                try {
+                    // Detect device type
+                    const isAndroid = /Android/i.test(navigator.userAgent);
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    const isMobile = isAndroid || isIOS;
+                    
+                    // Use different strategies based on device
+                    if (isAndroid) {
+                        // Android: Use blob URL approach with delayed cleanup
+                        const blobUrl = URL.createObjectURL(shareFile);
+                        
+                        // Create and trigger download
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = blobUrl;
+                        a.download = `Valentine_${code || 'Love'}.json`;
+                        
+                        // Ensure element is in DOM on Android
+                        document.body.appendChild(a);
+                        
+                        // Trigger click
+                        try {
+                            a.click();
+                        } catch (clickError) {
+                            // If click fails, try alternative method
+                            console.warn('Click failed, trying alternative:', clickError);
+                            const event = new MouseEvent('click', {
+                                view: window,
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            a.dispatchEvent(event);
+                        }
+                        
+                        // Cleanup with delay for Android
+                        setTimeout(() => {
+                            try {
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(blobUrl);
+                            } catch (e) {
+                                console.warn('Cleanup error:', e);
+                            }
+                        }, 2000);
+                        
+                    } else if (isIOS) {
+                        // iOS: Use different approach
+                        const blobUrl = URL.createObjectURL(shareFile);
+                        window.open(blobUrl);
+                        
+                    } else {
+                        // Desktop: Standard approach
+                        const blobUrl = URL.createObjectURL(shareFile);
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = `Valentine_${code || 'Love'}.json`;
+                        a.click();
+                        URL.revokeObjectURL(blobUrl);
+                    }
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    alert('Download failed. Please try using the Share button instead.');
+                }
             };
 
+            // Enhanced Share Function with Mobile Support
             const share = async () => {
-                // Detect HTTPS context
-                const isHTTPS = window.location.protocol === 'https:';
-
-                // Safe feature detection for Web Share API
-                const hasNavigatorShare = typeof navigator !== 'undefined' && 'share' in navigator;
-                const hasCanShare = hasNavigatorShare && typeof navigator.canShare === 'function';
-
-                let canShareFiles = false;
-
-                // Try to check if we can share files (with error handling for browsers that don't support canShare)
-                if (hasCanShare) {
-                    try {
-                        canShareFiles = navigator.canShare({ files: [shareFile] });
-                    } catch (e) {
-                        // Some browsers throw errors when checking canShare
-                        // Fall back to checking if share exists (we'll try sharing and handle errors)
-                        canShareFiles = false;
-                    }
-                }
-
-                // Attempt native share if conditions are met
-                if (hasNavigatorShare && (canShareFiles || !hasCanShare)) {
-                    try {
-                        // Try to share with all data
-                        await navigator.share({
-                            files: [shareFile],
-                            title: 'Valentine',
-                            text: `Code: ${code}`
-                        });
-                        // Success - share was completed (or could have been cancelled by user choosing "cancel")
-                        return;
-                    } catch (e) {
-                        // Handle different error types
-                        if (e.name === 'AbortError') {
-                            // User cancelled the share dialog - this is normal, do nothing
-                            return;
-                        } else if (e.name === 'NotAllowedError') {
-                            // Permission denied or HTTPS required
-                            if (!isHTTPS) {
-                                alert('File sharing requires HTTPS. Downloading file instead.');
+                if (!shareFile) return;
+                
+                try {
+                    // Detect device type
+                    const isAndroid = /Android/i.test(navigator.userAgent);
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    
+                    // Check HTTPS (required for Web Share API on some browsers)
+                    const isHTTPS = window.location.protocol === 'https:';
+                    
+                    // Check for Web Share API availability
+                    const hasNavigatorShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+                    const hasCanShare = typeof navigator.canShare === 'function';
+                    
+                    // For Android, try Web Share API first if available
+                    if (hasNavigatorShare && (isAndroid || isIOS)) {
+                        try {
+                            // Check if we can share files
+                            let canShare = true;
+                            if (hasCanShare) {
+                                try {
+                                    canShare = navigator.canShare({ files: [shareFile] });
+                                } catch (e) {
+                                    canShare = true; // Assume we can try
+                                }
                             }
-                            // Fall through to download
-                        } else if (e.name === 'TypeError' || e.name === 'NotSupportedError') {
-                            // Browser doesn't support file sharing or the file type
-                            // Fall through to download silently
-                        } else {
-                            // Other errors - log for debugging in development
-                            console.warn('Share failed:', e.name, e.message);
+                            
+                            if (canShare) {
+                                await navigator.share({
+                                    files: [shareFile],
+                                    title: 'Cupid Love Message',
+                                    text: `Secret Code: ${code}`
+                                });
+                                return; // Success
+                            }
+                        } catch (e) {
+                            if (e.name === 'AbortError') return; // User cancelled
                             // Fall through to download
                         }
                     }
+                    
+                    // Fallback to download for all cases
+                    triggerDownload();
+                    
+                } catch (error) {
+                    console.error('Share error:', error);
+                    triggerDownload(); // Fallback to download
                 }
-
-                // Fallback to download for all cases where share isn't available or failed
-                triggerDownload();
             };
 
             const upload = (e) => {
