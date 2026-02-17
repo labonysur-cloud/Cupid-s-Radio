@@ -668,6 +668,47 @@
             return decoder.decode(decrypted);
         };
 
+        // --- CUTE TYPING SOUND EFFECT ---
+        const playTypingSound = () => {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                
+                // Generate a cute, light "click" sound
+                const now = ctx.currentTime;
+                const duration = 0.05; // Very short, cute sound
+                
+                // Create oscillator for a cute beep
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const filter = ctx.createBiquadFilter();
+                
+                // Randomly vary pitch slightly for variety
+                const pitchVariation = 1 + (Math.random() - 0.5) * 0.2;
+                osc.frequency.value = 800 * pitchVariation; // Cute high-pitched sound
+                osc.type = 'sine';
+                
+                // Soft lowpass filter for a gentler sound
+                filter.type = 'lowpass';
+                filter.frequency.value = 1200;
+                
+                // Quick envelope - attack and decay
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                
+                // Connect and play
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + duration);
+            } catch (e) {
+                // Silently fail if Web Audio API is unavailable
+                console.log("Typing sound unavailable");
+            }
+        };
+
         // --- ASCII ART HELPERS ---
         const imageToAscii = (imageFile, options = {}) => {
             const {
@@ -1406,6 +1447,7 @@
                             placeholder="Write your letter here..."
                             value={letter}
                             onChange={e => setLetter(e.target.value)}
+                            onKeyDown={() => playTypingSound()}
                             style={{ position: 'relative', zIndex: 10, background: 'transparent' }}
                         />
                     </div>
@@ -1492,7 +1534,7 @@
                                         placeholder="Write your love note here..."
                                         value={cardData.message}
                                         onChange={(e) => setCardData({ ...cardData, message: e.target.value })}
-                                        onKeyDown={(e) => { }}
+                                        onKeyDown={() => playTypingSound()}
                                         style={{ position: 'relative', zIndex: 10 }}
                                     />
                                     <div className="ascii-art-display">{asciiArt}</div>
@@ -1501,7 +1543,7 @@
                                         placeholder="Your Name (your crush)"
                                         value={cardData.from}
                                         onChange={(e) => setCardData({ ...cardData, from: e.target.value })}
-                                        onKeyDown={(e) => { }}
+                                        onKeyDown={() => playTypingSound()}
                                         style={{ position: 'relative', zIndex: 10 }}
                                     />
                                     <div style={{ textAlign: 'right', marginTop: 10 }}>
