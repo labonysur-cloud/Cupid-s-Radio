@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cupid's Radio</title>
-    
+
     <!-- React & ReactDOM -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-    
+    <script crossorigin
+        src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+
     <!-- Babel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 
@@ -20,94 +22,435 @@
         }
 
         body {
-            margin: 0; padding: 0;
+            margin: 0;
+            padding: 0;
             background-color: var(--bg);
             font-family: 'Courier New', Courier, monospace;
             color: var(--red);
-            height: 100vh; overflow: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
             -webkit-tap-highlight-color: transparent;
         }
 
         /* Gingham Pattern */
         .bg-pattern {
-            position: fixed; inset: 0; opacity: 0.08;
+            position: fixed;
+            inset: 0;
+            opacity: 0.08;
             background-image:
                 linear-gradient(45deg, var(--red) 25%, transparent 25%, transparent 75%, var(--red) 75%, var(--red)),
                 linear-gradient(45deg, var(--red) 25%, transparent 25%, transparent 75%, var(--red) 75%, var(--red));
             background-position: 0 0, 20px 20px;
             background-size: 40px 40px;
-            pointer-events: none; z-index: -1;
+            pointer-events: none;
+            z-index: -1;
         }
 
         .screen {
-            height: 100%; display: flex; flex-direction: column;
-            padding: 20px; box-sizing: border-box;
-            max-width: 500px; margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .card {
             background: var(--paper);
             border: 1px solid rgba(139, 0, 0, 0.1);
             box-shadow: 0 4px 12px rgba(139, 0, 0, 0.05);
-            border-radius: 20px; padding: 24px; margin-bottom: 20px;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
             text-align: center;
+            position: relative;
+            /* Ensure stickers position correctly */
+        }
+
+        .letter-card-read {
+            min-height: 300px;
+            /* Match typical write view height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* Heart Play Button */
-        .heart-play-container { display: flex; justify-content: center; margin: 15px 0; }
-        
+        .heart-play-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
         .heart-btn {
-            background: var(--red); color: white; width: 140px; padding: 12px 20px;
-            border-radius: 50px; border: none; cursor: pointer;
-            box-shadow: 0 6px 15px rgba(139,0,0,0.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-family: inherit; font-weight: bold; font-size: 16px;
+            background: var(--red);
+            color: white;
+            width: 140px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(139, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 16px;
             transition: transform 0.2s;
         }
-        .heart-btn:active { transform: scale(0.95); }
-        .heart-btn.playing { background: #ff4d4d; animation: pulse-heart 1.5s infinite; }
+
+        .heart-btn:active {
+            transform: scale(0.95);
+        }
+
+        .heart-btn.playing {
+            background: #ff4d4d;
+            animation: pulse-heart 1.5s infinite;
+        }
 
         @keyframes pulse-heart {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(255, 77, 77, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+            }
         }
 
         /* Record Button */
         .record-btn {
-            background: white; border: 2px solid var(--red); color: var(--red);
-            padding: 12px 24px; border-radius: 50px; font-weight: bold; font-size: 14px;
-            cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 0 auto;
+            background: white;
+            border: 2px solid var(--red);
+            color: var(--red);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
             transition: all 0.2s;
         }
-        .record-btn.recording { background: var(--red); color: white; animation: pulse-red 2s infinite; }
-        
+
+        .record-btn.recording {
+            background: var(--red);
+            color: white;
+            animation: pulse-red 2s infinite;
+        }
+
         /* Action Buttons */
         .btn-action {
-            background: var(--red); color: white; border: none; padding: 16px;
-            border-radius: 50px; font-size: 16px; font-weight: bold; width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 10px rgba(139, 0, 0, 0.2); transition: transform 0.1s;
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(139, 0, 0, 0.2);
+            transition: transform 0.1s;
         }
-        .btn-action:active { transform: scale(0.97); }
+
+        .btn-action:active {
+            transform: scale(0.97);
+        }
 
         textarea {
-            width: 100%; min-height: 150px; border: none;
-            background: repeating-linear-gradient(transparent, transparent 31px, rgba(139,0,0,0.05) 31px, rgba(139,0,0,0.05) 32px);
-            line-height: 32px; font-size: 18px; outline: none; resize: none;
-            color: #333; font-family: 'Courier New', Courier, monospace;
+            width: 100%;
+            min-height: 150px;
+            border: none;
+            background: repeating-linear-gradient(transparent, transparent 31px, rgba(139, 0, 0, 0.05) 31px, rgba(139, 0, 0, 0.05) 32px);
+            line-height: 32px;
+            font-size: 18px;
+            outline: none;
+            resize: none;
+            color: #333;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         .header-cute {
-            font-size: 12px; font-weight: bold; color: #888; margin-bottom: 15px;
-            text-transform: uppercase; letter-spacing: 2px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #888;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        #loader { position: fixed; inset: 0; background: var(--bg); z-index: 99; display: flex; justify-content: center; align-items: center; color: var(--red); font-weight: bold; }
-        #error-log { display: none; position: fixed; top: 0; left: 0; width: 100%; background: black; color: #ff5555; padding: 20px; font-size: 12px; z-index: 9999; }
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 99;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--red);
+            font-weight: bold;
+        }
+
+        #error-log {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: black;
+            color: #ff5555;
+            padding: 20px;
+            font-size: 12px;
+            z-index: 9999;
+        }
+
+        /* ASCII Card Styles */
+        .ascii-card-container {
+            background: var(--paper);
+            border: 1px solid rgba(139, 0, 0, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .ascii-canvas {
+            display: none;
+        }
+
+        .ascii-preview {
+            position: relative;
+            background: #fffef8;
+            border: 3px double var(--red);
+            border-radius: 12px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
+        }
+
+        .vintage-border {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid var(--red);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .vintage-border::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .ascii-art-display {
+            font-family: 'Courier New', monospace;
+            font-size: 4px;
+            line-height: 4px;
+            color: var(--red);
+            white-space: pre;
+            text-align: center;
+            overflow: hidden;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .card-text-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--red);
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            outline: none;
+            margin: 10px 0;
+            padding: 5px;
+            cursor: text;
+            resize: none;
+            z-index: 100;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.01);
+            /* Trick to ensure clicks register */
+        }
+
+        .card-message {
+            font-size: 16px;
+            min-height: 60px;
+        }
+
+        .card-from {
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .image-upload-btn {
+            background: white;
+            border: 2px dashed var(--red);
+            color: var(--red);
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .image-upload-btn:hover {
+            background: rgba(139, 0, 0, 0.05);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-card {
+            flex: 1;
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn-card:active {
+            transform: scale(0.97);
+        }
+
+        .btn-card.secondary {
+            background: white;
+            color: var(--red);
+            border: 2px solid var(--red);
+        }
+
+        /* ASCII Controls */
+        .ascii-controls {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(139, 0, 0, 0.03);
+            border-radius: 12px;
+            border: 1px dashed rgba(139, 0, 0, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-size: 10px;
+            font-weight: bold;
+            width: 70px;
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        .control-slider {
+            flex: 1;
+            accent-color: var(--red);
+            height: 4px;
+        }
+
+        .control-input {
+            flex: 1;
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            color: var(--red);
+            font-size: 12px;
+            outline: none;
+        }
+
+        /* Sticker System */
+        .sticker-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 20;
+        }
+
+        .sticker-item {
+            position: absolute;
+            cursor: grab;
+            pointer-events: auto;
+            user-select: none;
+            touch-action: none;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .sticker-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+
+        .sticker-picker {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px;
+            background: rgba(255, 254, 248, 0.8);
+            border: 1px dashed var(--red);
+            border-radius: 8px;
+            margin: 10px 0;
+            white-space: nowrap;
+        }
+
+        .sticker-picker img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .sticker-picker img:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
     </style>
 </head>
+
 <body>
     <div id="loader">LOADING...</div>
     <div id="error-log"></div>
@@ -115,7 +458,10 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        window.onerror = function(msg, url, line) {
+        window.onerror = function (msg, url, line) {
+            // Ignore ResizeObserver loop errors as they are often benign
+            if (msg.includes('ResizeObserver loop')) return;
+
             const el = document.getElementById('error-log');
             el.style.display = 'block';
             el.innerHTML += `<div>Error: ${msg} (Line ${line})</div>`;
@@ -126,7 +472,7 @@
 
         setTimeout(() => {
             const loader = document.getElementById('loader');
-            if(loader) loader.style.display = 'none';
+            if (loader) loader.style.display = 'none';
         }, 1000);
 
         // --- ICONS ---
@@ -148,40 +494,142 @@
                     </g>
                 )
             };
-            return <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{overflow:'visible'}}>{icons[name]}</svg>;
+            return <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}>{icons[name]}</svg>;
         };
+
+        // --- AUDIO HELPERS ---
+        function makeDistortionCurve(amount) {
+            const k = typeof amount === 'number' ? amount : 50;
+            const n_samples = 44100;
+            const curve = new Float32Array(n_samples);
+            const deg = Math.PI / 180;
+            for (let i = 0; i < n_samples; ++i) {
+                const x = i * 2 / n_samples - 1;
+                curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+            }
+            return curve;
+        }
 
         // --- RADIO PLAYER ---
         const RadioPlayer = ({ audioBlob }) => {
             const [isPlaying, setIsPlaying] = useState(false);
             const audioCtxRef = useRef(null);
-            
+            const sourceRef = useRef(null);
+            const noiseRef = useRef(null);
+
+            const stop = () => {
+                if (sourceRef.current) { sourceRef.current.stop(); sourceRef.current = null; }
+                if (noiseRef.current) { noiseRef.current.stop(); noiseRef.current = null; }
+                if (audioCtxRef.current) { audioCtxRef.current.close(); audioCtxRef.current = null; }
+                setIsPlaying(false);
+            };
+
             const play = async () => {
-                if(isPlaying) {
-                    if(audioCtxRef.current) audioCtxRef.current.close();
-                    setIsPlaying(false);
-                    return;
-                }
+                if (isPlaying) { stop(); return; }
+
                 try {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     const ctx = new AudioContext();
                     audioCtxRef.current = ctx;
 
+                    // 1. Process Voice
                     const arrayBuffer = await audioBlob.arrayBuffer();
                     const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-                    
                     const source = ctx.createBufferSource();
                     source.buffer = audioBuffer;
+                    sourceRef.current = source;
 
-                    const highpass = ctx.createBiquadFilter(); highpass.type = "highpass"; highpass.frequency.value = 600;
-                    const lowpass = ctx.createBiquadFilter(); lowpass.type = "lowpass"; lowpass.frequency.value = 3000;
-                    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20;
-                    
-                    source.connect(highpass); highpass.connect(lowpass); lowpass.connect(comp); comp.connect(ctx.destination);
+                    // --- VOICE ISOLATION & EQ ---
+                    // 1. Highpass: Cut AC rumble, traffic, low noise
+                    const highpass = ctx.createBiquadFilter();
+                    highpass.type = "highpass";
+                    highpass.frequency.value = 200;
+
+                    // 2. Lowpass: Cut hiss, digital brightness, room reflections
+                    const lowpass = ctx.createBiquadFilter();
+                    lowpass.type = "lowpass";
+                    lowpass.frequency.value = 4000;
+
+                    // 3. Presence: Boost intelligibility & vintage mid-range
+                    const midBoost = ctx.createBiquadFilter();
+                    midBoost.type = "peaking";
+                    midBoost.frequency.value = 2000;
+                    midBoost.Q.value = 1;
+                    midBoost.gain.value = 3;
+
+                    // --- ANALOG WARMTH ---
+                    const distortion = ctx.createWaveShaper();
+                    distortion.curve = makeDistortionCurve(30); // Gentle warmth
+                    distortion.oversample = '4x';
+
+                    const compress = ctx.createDynamicsCompressor();
+                    compress.threshold.value = -25;
+                    compress.knee.value = 40;
+                    compress.ratio.value = 5;
+
+                    // --- TAPE WOBBLE (The "Lost Memory" Effect) ---
+                    // LFO to modulate playback speed (pitch)
+                    const osc = ctx.createOscillator();
+                    osc.frequency.value = 1.5; // 1.5Hz (Slow drift)
+                    osc.type = 'sine';
+
+                    const oscGain = ctx.createGain();
+                    oscGain.gain.value = 25; // Depth of wobble (25 cents)
+
+                    osc.connect(oscGain);
+                    oscGain.connect(source.detune);
+                    osc.start(0);
+
+                    // Voice Gain Boost (Make sure voice is heard!)
+                    const voiceGain = ctx.createGain();
+                    voiceGain.gain.value = 2.5;
+
+                    // Connect Chain: Source -> HP -> LP -> Mid -> Dist -> Comp -> VoiceGain -> Dest
+                    source.connect(highpass);
+                    highpass.connect(lowpass);
+                    lowpass.connect(midBoost);
+                    midBoost.connect(distortion);
+                    distortion.connect(compress);
+                    compress.connect(voiceGain);
+                    voiceGain.connect(ctx.destination);
+
+                    // 2. Generate Tape Noise (Subtle Texture)
+                    const bufferSize = ctx.sampleRate * 2; // 2 seconds loop
+                    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    let lastOut = 0;
+                    for (let i = 0; i < bufferSize; i++) {
+                        const white = Math.random() * 2 - 1;
+                        output[i] = (lastOut + (0.02 * white)) / 1.02; // Pink-ish noise
+                        lastOut = output[i];
+                        output[i] *= 3.5;
+                    }
+
+                    const noise = ctx.createBufferSource();
+                    noise.buffer = noiseBuffer;
+                    noise.loop = true;
+                    noiseRef.current = noise;
+
+                    const noiseGain = ctx.createGain();
+                    noiseGain.gain.value = 0.025; // Balanced texture
+
+                    noise.connect(noiseGain);
+                    noiseGain.connect(ctx.destination);
+
+                    // Ensure context is running
+                    if (ctx.state === 'suspended') {
+                        await ctx.resume();
+                    }
+
+                    // Start
                     source.start(0);
+                    noise.start(0);
                     setIsPlaying(true);
-                    source.onended = () => setIsPlaying(false);
-                } catch(e) {
+
+                    source.onended = () => stop();
+                } catch (e) {
+                    console.error("Audio Playback Error:", e);
+                    // Fallback
                     const audio = new Audio(URL.createObjectURL(audioBlob));
                     audio.play();
                     setIsPlaying(true);
@@ -212,7 +660,7 @@
         const decryptText = (base64, pass) => {
             const binaryStr = atob(base64);
             const data = new Uint8Array(binaryStr.length);
-            for(let i=0; i<binaryStr.length; i++) data[i] = binaryStr.charCodeAt(i);
+            for (let i = 0; i < binaryStr.length; i++) data[i] = binaryStr.charCodeAt(i);
             const encoder = new TextEncoder();
             const key = encoder.encode(pass);
             const decrypted = data.map((byte, i) => byte ^ key[i % key.length]);
@@ -220,23 +668,307 @@
             return decoder.decode(decrypted);
         };
 
+        // --- ASCII ART HELPERS ---
+        const imageToAscii = (imageFile, options = {}) => {
+            const {
+                resolution = 120,
+                contrast = 1,
+                brightness = 0,
+                charset = ''
+            } = options;
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        // Calculate dimensions maintaining aspect ratio
+                        const scaleFactor = width / img.width;
+                        const height = Math.floor(img.height * scaleFactor * 0.5); // 0.5 for character aspect ratio
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        // Draw and get pixel data
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const imageData = ctx.getImageData(0, 0, width, height);
+                        const data = imageData.data;
+
+                        // 1. Calculate brightness values using luminosity
+                        const brightnessValues = [];
+                        for (let i = 0; i < data.length; i += 4) {
+                            // Luminosity formula: 0.21 R + 0.72 G + 0.07 B
+                            const b = (0.21 * data[i] + 0.72 * data[i + 1] + 0.07 * data[i + 2]);
+                            brightnessValues.push(b);
+                        }
+
+                        // 2. Contrast Stretching (Min-Max Normalization)
+                        let min = 255;
+                        let max = 0;
+                        for (let val of brightnessValues) {
+                            if (val < min) min = val;
+                            if (val > max) max = val;
+                        }
+
+                        // Avoid division by zero
+                        const range = max - min || 1;
+
+                        // ASCII characters (more detailed gradient)
+                        const chars = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
+                        let ascii = '';
+
+                        for (let y = 0; y < height; y++) {
+                            for (let x = 0; x < width; x++) {
+                                const index = y * width + x;
+                                let val = brightnessValues[index];
+
+                                // Normalize value to 0-255 range based on min/max
+                                const normalized = ((val - min) / range) * 255;
+
+                                const charIndex = Math.floor((normalized / 255) * (chars.length - 1));
+                                ascii += chars[chars.length - 1 - charIndex];
+                            }
+                            ascii += '\n';
+                        }
+
+                        resolve(ascii);
+                    };
+                    img.src = e.target.result;
+                };
+
+                reader.readAsDataURL(imageFile);
+            });
+        };
+
+        const imageToAsciiAdvanced = (imageFile, options = {}) => {
+            const {
+                resolution = 120,
+                contrast = 1,
+                brightness = 0,
+                charset = ''
+            } = options;
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        // Calculate dimensions maintaining aspect ratio
+                        const scaleFactor = resolution / img.width;
+                        const height = Math.floor(img.height * scaleFactor * 0.5); // 0.5 for character aspect ratio
+
+                        canvas.width = resolution;
+                        canvas.height = height;
+
+                        // Draw and get pixel data
+                        ctx.drawImage(img, 0, 0, resolution, height);
+                        const imageData = ctx.getImageData(0, 0, resolution, height);
+                        const data = imageData.data;
+
+                        // Default detailed charset if none provided
+                        const defaultChars = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
+                        const chars = charset.length > 0 ? charset : defaultChars;
+
+                        let ascii = '';
+
+                        for (let y = 0; y < height; y++) {
+                            for (let x = 0; x < resolution; x++) {
+                                const i = (y * resolution + x) * 4;
+
+                                let r = data[i];
+                                let g = data[i + 1];
+                                let b = data[i + 2];
+
+                                // 1. Apply Contrast
+                                if (contrast !== 1) {
+                                    const factor = contrast;
+                                    r = ((r - 128) * factor) + 128;
+                                    g = ((g - 128) * factor) + 128;
+                                    b = ((b - 128) * factor) + 128;
+                                }
+
+                                // 2. Apply Brightness
+                                r += brightness;
+                                g += brightness;
+                                b += brightness;
+
+                                // Clamp values
+                                r = Math.max(0, Math.min(255, r));
+                                g = Math.max(0, Math.min(255, g));
+                                b = Math.max(0, Math.min(255, b));
+
+                                // 3. Calculate Luminosity
+                                const luminosity = (0.21 * r + 0.72 * g + 0.07 * b); // 0..255
+
+                                // 4. Map to Character
+                                const charIndex = Math.floor((luminosity / 255) * (chars.length - 1));
+                                ascii += chars[charIndex];
+                            }
+                            ascii += '\n';
+                        }
+
+                        resolve(ascii);
+                    };
+                    img.src = e.target.result;
+                };
+
+                reader.readAsDataURL(imageFile);
+            });
+        };
+
+        const STICKER_ASSETS = [
+            "bow.png", "heart wax.png", "hugging-teddy.png",
+            "kiss sticker.png", "kisslove.png", "love-wax.png",
+            "pink kiss.png", "redkiss.png", "rose wax.png",
+            "round-love-wax.png", "star.png"
+        ];
+
         // --- APP ---
         const App = () => {
             const [view, setView] = useState('home');
-            const [isRecording, setIsRecording] = useState(false);
             const [audioBlob, setAudioBlob] = useState(null);
             const [letter, setLetter] = useState("");
             const [code, setCode] = useState("");
+            const [letterStickers, setLetterStickers] = useState([]);
+            const [asciiArt, setAsciiArt] = useState("");
+            const [showCardDesigner, setShowCardDesigner] = useState(false);
+            const [cardData, setCardData] = useState({ message: "", from: "", to: "" });
+            const [cardStickers, setCardStickers] = useState([]);
+
+            const [isRecording, setIsRecording] = useState(false);
             const [shareFile, setShareFile] = useState(null);
             const [receivedData, setReceivedData] = useState(null);
             const [unlockCode, setUnlockCode] = useState("");
             const mediaRecorder = useRef(null);
             const chunks = useRef([]);
 
+            // ASCII Card states
+            const [uploadedImage, setUploadedImage] = useState(null);
+            const [asciiOptions, setAsciiOptions] = useState({
+                resolution: 120,
+                contrast: 1.2, // Boost contrast slightly by default
+                brightness: 10, // Slight brightness boost
+                charset: ""
+            });
+            const [isGenerating, setIsGenerating] = useState(false);
+            const canvasRef = useRef(null);
+
+            // Sticker State
+            const [dragState, setDragState] = useState(null); // { id, type, startX, startY, initialX, initialY }
+
+            // Sticker Handlers
+            const addSticker = (src, type, x = null, y = null) => {
+                const sticker = {
+                    id: Date.now() + Math.random(),
+                    src,
+                    x: x !== null ? x : 50 + (Math.random() * 20),
+                    y: y !== null ? y : 50 + (Math.random() * 20),
+                    scale: 1,
+                    rotation: (Math.random() - 0.5) * 30
+                };
+                if (type === 'card') setCardStickers(prev => [...prev, sticker]);
+                else setLetterStickers(prev => [...prev, sticker]);
+            };
+
+            const removeSticker = (id, type) => {
+                if (type === 'card') setCardStickers(prev => prev.filter(s => s.id !== id));
+                else setLetterStickers(prev => prev.filter(s => s.id !== id));
+            };
+
+            const handleStickerDragStart = (e, id, type, currentX, currentY) => {
+                e.stopPropagation();
+                // For touch/mouse compat
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                setDragState({
+                    id, type,
+                    startX: clientX,
+                    startY: clientY,
+                    initialX: currentX,
+                    initialY: currentY
+                });
+            };
+
+            // New: Handle Drop from Picker
+            const handleDragOver = (e) => {
+                e.preventDefault(); // Necessary to allow dropping
+            };
+
+            const handleDrop = (e, type) => {
+                e.preventDefault();
+                const src = e.dataTransfer.getData("text/plain");
+                if (!src) return;
+
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left - 25; // Center the sticker (50px width)
+                const y = e.clientY - rect.top - 25;
+
+                addSticker(src, type, x, y);
+            };
+
+            // Global drag move listener attached to window/document is cleaner, 
+            // but for simplicity in React we can use a wrapper or window event.
+            // Let's use a useEffect to handle global move/up when dragging.
+            useEffect(() => {
+                if (!dragState) return;
+
+                let animationFrameId;
+
+                const handleMove = (e) => {
+                    // Prevent scrolling on touch devices while dragging sticker
+                    if (e.touches) e.preventDefault();
+
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                    const dx = clientX - dragState.startX;
+                    const dy = clientY - dragState.startY;
+
+                    const updateFn = dragState.type === 'card' ? setCardStickers : setLetterStickers;
+
+                    // Optimize with requestAnimationFrame
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = requestAnimationFrame(() => {
+                        updateFn(prev => prev.map(s => {
+                            if (s.id !== dragState.id) return s;
+                            return { ...s, x: dragState.initialX + dx, y: dragState.initialY + dy };
+                        }));
+                    });
+                };
+
+                const handleUp = () => {
+                    cancelAnimationFrame(animationFrameId);
+                    setDragState(null);
+                };
+
+                // Use non-passive listener for touchmove to allow preventing default
+                window.addEventListener('mousemove', handleMove);
+                window.addEventListener('mouseup', handleUp);
+                window.addEventListener('touchmove', handleMove, { passive: false });
+                window.addEventListener('touchend', handleUp);
+
+                return () => {
+                    cancelAnimationFrame(animationFrameId);
+                    window.removeEventListener('mousemove', handleMove);
+                    window.removeEventListener('mouseup', handleUp);
+                    window.removeEventListener('touchmove', handleMove);
+                    window.removeEventListener('touchend', handleUp);
+                };
+            }, [dragState]);
+
             // Universal Recording
             const toggleRecording = async () => {
-                if(isRecording) {
-                    if(mediaRecorder.current) mediaRecorder.current.stop();
+                if (isRecording) {
+                    if (mediaRecorder.current) mediaRecorder.current.stop();
                     setIsRecording(false);
                 } else {
                     try {
@@ -244,9 +976,9 @@
                         let options = {};
                         if (MediaRecorder.isTypeSupported('audio/webm')) options = { mimeType: 'audio/webm' };
                         else if (MediaRecorder.isTypeSupported('audio/mp4')) options = { mimeType: 'audio/mp4' };
-                        
+
                         mediaRecorder.current = new MediaRecorder(stream, options);
-                        mediaRecorder.current.ondataavailable = e => { if(e.data.size > 0) chunks.current.push(e.data); };
+                        mediaRecorder.current.ondataavailable = e => { if (e.data.size > 0) chunks.current.push(e.data); };
                         mediaRecorder.current.onstop = () => {
                             const blob = new Blob(chunks.current, { type: chunks.current[0].type });
                             setAudioBlob(blob);
@@ -255,20 +987,225 @@
                         chunks.current = [];
                         mediaRecorder.current.start();
                         setIsRecording(true);
-                    } catch(e) { alert("Microphone access needed!"); }
+                    } catch (e) { alert("Microphone access needed!"); }
                 }
             };
 
+            // ASCII Card Handlers
+            const handleImageUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                setUploadedImage(file);
+                setIsGenerating(true);
+
+                try {
+                    const ascii = await imageToAsciiAdvanced(file, asciiOptions);
+                    setAsciiArt(ascii);
+                    setShowCardDesigner(true);
+                    setIsGenerating(false);
+                } catch (error) {
+                    alert("Error generating ASCII art");
+                    setIsGenerating(false);
+                }
+            };
+
+            const regenerateAscii = async (newOptions) => {
+                if (!uploadedImage) return;
+                setIsGenerating(true);
+                // Update state immediately for UI 
+                setAsciiOptions(newOptions);
+
+                try {
+                    // Introduce small delay to allow UI to update if needed
+                    setTimeout(async () => {
+                        const ascii = await imageToAsciiAdvanced(uploadedImage, newOptions);
+                        setAsciiArt(ascii);
+                        setIsGenerating(false);
+                    }, 50);
+                } catch (error) {
+                    setIsGenerating(false);
+                }
+            };
+
+            const drawCanvas = async (includeStickers = false) => {
+                if (!asciiArt || !canvasRef.current) return;
+
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+
+                // Set canvas size
+                canvas.width = 600;
+                canvas.height = 800;
+
+                // Background
+                ctx.fillStyle = '#fffef8';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw decorative border
+                ctx.strokeStyle = '#8B0000';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+                // Inner border
+                ctx.lineWidth = 3;
+                ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+
+                // Draw wavy border effect
+                ctx.lineWidth = 1;
+                ctx.strokeRect(22, 22, canvas.width - 44, canvas.height - 44);
+
+                // Draw message text
+                ctx.fillStyle = '#8B0000';
+                ctx.font = '22px Courier New';
+                ctx.textAlign = 'center';
+
+                const message = cardData.message || '';
+                const maxWidth = canvas.width - 120;
+                const words = message.split(' ');
+                let line = '';
+                let y = 100;
+                const lineHeight = 28;
+
+                for (let word of words) {
+                    const testLine = line + word + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && line !== '') {
+                        ctx.fillText(line, canvas.width / 2, y);
+                        line = word + ' ';
+                        y += lineHeight;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                ctx.fillText(line, canvas.width / 2, y);
+
+                // Draw ASCII art
+                const lines = asciiArt.split('\n');
+                const lineLength = lines[0] ? lines[0].length : 1;
+                // Calculate font size to fit width ~500px
+                const fontSize = Math.max(4, Math.min(14, 500 / (lineLength * 0.6)));
+
+                ctx.font = `${fontSize}px Courier New`;
+                ctx.textAlign = 'center';
+
+                let asciiY = y + 60;
+
+                for (let i = 0; i < lines.length; i++) {
+                    ctx.fillText(lines[i], canvas.width / 2, asciiY);
+                    asciiY += fontSize;
+                }
+
+                // Draw "From" text
+                ctx.font = '20px Courier New';
+                ctx.fontStyle = 'italic';
+                ctx.textAlign = 'center';
+                ctx.fillText(`From,  ${cardData.from || '________'}`, canvas.width / 2, canvas.height - 100);
+
+                // Draw heart decoration
+                ctx.fillStyle = '#ff4d4d';
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 80, canvas.height - 80);
+                ctx.bezierCurveTo(canvas.width - 80, canvas.height - 90, canvas.width - 95, canvas.height - 90, canvas.width - 95, canvas.height - 80);
+                ctx.bezierCurveTo(canvas.width - 95, canvas.height - 70, canvas.width - 80, canvas.height - 60, canvas.width - 70, canvas.height - 50);
+                ctx.bezierCurveTo(canvas.width - 60, canvas.height - 60, canvas.width - 45, canvas.height - 70, canvas.width - 45, canvas.height - 80);
+                ctx.bezierCurveTo(canvas.width - 45, canvas.height - 90, canvas.width - 60, canvas.height - 90, canvas.width - 60, canvas.height - 80);
+                ctx.fill();
+
+                // Draw Stickers
+                if (includeStickers && cardStickers.length > 0) {
+                    const previewEl = document.querySelector('.ascii-preview');
+                    let scaleRatio = 1;
+                    if (previewEl) {
+                        scaleRatio = canvas.width / previewEl.offsetWidth;
+                    }
+
+                    const images = await Promise.all(cardStickers.map(s => {
+                        return new Promise((resolve) => {
+                            const img = new Image();
+                            img.onload = () => resolve({ img, s });
+                            img.onerror = () => resolve(null);
+                            img.src = `assets/${s.src}`;
+                        });
+                    }));
+
+                    images.forEach(item => {
+                        if (!item) return;
+                        const { img, s } = item;
+                        ctx.save();
+                        // Scale coordinates and size
+                        const x = s.x * scaleRatio;
+                        const y = s.y * scaleRatio;
+                        const w = (50 * s.scale) * scaleRatio;
+
+                        ctx.translate(x + w / 2, y + w / 2);
+                        ctx.rotate(s.rotation * Math.PI / 180);
+
+                        ctx.drawImage(img, -w / 2, -w / 2, w, w * (img.height / img.width));
+                        ctx.restore();
+                    });
+                }
+            };
+
+            const downloadCard = async () => {
+                await drawCanvas(true);
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Cupid_Card_${cardData.from || 'Love'}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+            };
+
+            const shareCard = async () => {
+                await drawCanvas(true);
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], `Cupid_Card.png`, { type: 'image/png' });
+
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({ files: [file], title: 'Cupid Love Card' });
+                        } catch (e) {
+                            if (e.name !== 'AbortError') downloadCard();
+                        }
+                    } else {
+                        downloadCard();
+                    }
+                });
+            };
+
             const seal = () => {
-                if(!code || (!audioBlob && !letter)) return alert("Missing content or code!");
-                const reader = new FileReader();
-                reader.readAsDataURL(audioBlob || new Blob([]));
-                reader.onloadend = () => {
-                    const payload = JSON.stringify({ t: letter, a: reader.result });
+                if (!code || (!audioBlob && !letter && !asciiArt)) return alert("Missing content or code!");
+
+                const finalize = (audioDataUrl) => {
+                    const payload = JSON.stringify({
+                        t: letter,
+                        ls: letterStickers,
+                        a: audioDataUrl,
+                        card: asciiArt ? { ascii: asciiArt, data: cardData, stickers: cardStickers } : null
+                    });
                     const enc = encryptText(payload, code.toUpperCase());
-                    const file = new File([JSON.stringify({ app:"cupid", d: enc })], "Cupid_Signal.json", { type: "application/json" });
+                    const file = new File([JSON.stringify({ app: "cupid", d: enc })], "Cupid_Signal.json", { type: "application/json" });
                     setShareFile(file);
                 };
+
+                if (audioBlob) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = () => finalize(reader.result);
+                } else {
+                    finalize(null);
+                }
             };
 
             // Android-Proof Download Function
@@ -289,13 +1226,13 @@
             const share = async () => {
                 // Detect HTTPS context
                 const isHTTPS = window.location.protocol === 'https:';
-                
+
                 // Safe feature detection for Web Share API
                 const hasNavigatorShare = typeof navigator !== 'undefined' && 'share' in navigator;
                 const hasCanShare = hasNavigatorShare && typeof navigator.canShare === 'function';
-                
+
                 let canShareFiles = false;
-                
+
                 // Try to check if we can share files (with error handling for browsers that don't support canShare)
                 if (hasCanShare) {
                     try {
@@ -306,15 +1243,15 @@
                         canShareFiles = false;
                     }
                 }
-                
+
                 // Attempt native share if conditions are met
                 if (hasNavigatorShare && (canShareFiles || !hasCanShare)) {
                     try {
                         // Try to share with all data
-                        await navigator.share({ 
-                            files: [shareFile], 
-                            title: 'Valentine', 
-                            text: `Code: ${code}` 
+                        await navigator.share({
+                            files: [shareFile],
+                            title: 'Valentine',
+                            text: `Code: ${code}`
                         });
                         // Success - share was completed (or could have been cancelled by user choosing "cancel")
                         return;
@@ -339,15 +1276,15 @@
                         }
                     }
                 }
-                
+
                 // Fallback to download for all cases where share isn't available or failed
                 triggerDownload();
             };
 
             const upload = (e) => {
-                const f = e.target.files[0]; if(!f) return;
+                const f = e.target.files[0]; if (!f) return;
                 const r = new FileReader();
-                r.onload = ev => { try { const j = JSON.parse(ev.target.result); if(j.app==="cupid") setReceivedData(j.d); } catch(e) {} };
+                r.onload = ev => { try { const j = JSON.parse(ev.target.result); if (j.app === "cupid") setReceivedData(j.d); } catch (e) { } };
                 r.readAsText(f);
             };
 
@@ -355,29 +1292,78 @@
                 try {
                     const dec = decryptText(receivedData, unlockCode.toUpperCase());
                     const data = JSON.parse(dec);
-                    fetch(data.a).then(r=>r.blob()).then(b=>{ setAudioBlob(b); setLetter(data.t); setView('read'); });
-                } catch(e) { alert("Wrong Code"); }
+
+                    const restoreState = (blob) => {
+                        setAudioBlob(blob);
+                        setLetter(data.t);
+                        if (data.ls) setLetterStickers(data.ls); // Restore letter stickers
+                        if (data.card) {
+                            setAsciiArt(data.card.ascii);
+                            setCardData(data.card.data);
+                            setCardStickers(data.card.stickers || []); // Restore card stickers
+                            setShowCardDesigner(true);
+                        }
+                        setView('read');
+                    };
+
+                    if (data.a) {
+                        fetch(data.a).then(r => r.blob()).then(restoreState);
+                    } else {
+                        restoreState(null);
+                    }
+                } catch (e) { alert("Wrong Code"); }
             };
 
-            if(view === 'home') return (
-                <div className="screen" style={{justifyContent:'center'}}>
+
+
+
+
+            useEffect(() => {
+                drawCanvas(false);
+
+
+
+
+
+
+
+            }, [asciiArt, cardData]);
+
+            if (view === 'home') return (
+                <div className="screen" style={{ justifyContent: 'center' }}>
                     <div className="card">
-                        <div style={{color:'var(--red)', marginBottom:10}}><Icon name="heart"/></div>
-                        <h1 style={{margin:0, fontSize:24}}>Cupid's Radio</h1>
-                        <p style={{fontSize:12, opacity:0.6}}>SECURE FREQUENCY</p>
+                        <div style={{ color: 'var(--red)', marginBottom: 10 }}><Icon name="heart" /></div>
+                        <h1 style={{ margin: 0, fontSize: 24 }}>Cupid's Radio</h1>
+                        <p style={{ fontSize: 12, opacity: 0.6 }}>SECURE FREQUENCY</p>
                     </div>
-                    <button className="btn-action" onClick={() => setView('create')}> <Icon name="mic"/> Record Signal </button>
-                    <div style={{height:15}}></div>
-                    <button className="btn-action" style={{background:'white', color:'var(--red)', border:'2px solid var(--red)'}} onClick={() => setView('receive')}> <Icon name="lock"/> Open Signal </button>
+                    <button className="btn-action" onClick={() => setView('create')}> <Icon name="mic" /> Record Signal </button>
+                    <div style={{ height: 15 }}></div>
+                    <button className="btn-action" style={{ background: 'white', color: 'var(--red)', border: '2px solid var(--red)' }} onClick={() => setView('receive')}> <Icon name="lock" /> Open Signal </button>
+
+
                 </div>
             );
 
-            if(view === 'create') return (
+            const renderStickerPicker = (type) => (
+                <div className="sticker-picker">
+                    {STICKER_ASSETS.map(asset => (
+                        <img key={asset} src={`assets/${asset}`}
+                            draggable="true"
+                            onDragStart={(e) => {
+                                e.dataTransfer.setData("text/plain", asset);
+                            }}
+                            onClick={() => addSticker(asset, type)}
+                            title="Drag or Click to add" />
+                    ))}
+                </div>
+            );
+
+            if (view === 'create') return (
                 <div className="screen">
-                    <div style={{display:'flex', marginBottom:20}}>
-                        <button onClick={() => setView('home')} style={{background:'none', border:'none', color:'var(--red)'}}>BACK</button>
-                        <span style={{flex:1, textAlign:'center', fontWeight:'bold', color:'var(--red)'}}>COMPOSE</span>
-                        <div style={{width:40}}></div>
+                    <div style={{ display: 'flex', marginBottom: 20 }}>
+                        <button onClick={() => setView('home')} style={{ background: 'none', border: 'none', color: 'var(--red)' }}>BACK</button>
+                        <span style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: 'var(--red)' }}>COMPOSE</span>
+                        <div style={{ width: 40 }}></div>
                     </div>
                     <div className="card">
                         <div className="header-cute"> Voice Note <Icon name="music_cute" color="#8B0000" /> </div>
@@ -389,27 +1375,180 @@
                         ) : (
                             <div>
                                 <RadioPlayer audioBlob={audioBlob} />
-                                <button style={{background:'none', border:'none', textDecoration:'underline', color:'#888', fontSize:12, marginTop:10}} onClick={() => setAudioBlob(null)}>Record Again</button>
+                                <button style={{ background: 'none', border: 'none', textDecoration: 'underline', color: '#888', fontSize: 12, marginTop: 10 }} onClick={() => setAudioBlob(null)}>Record Again</button>
                             </div>
                         )}
                     </div>
-                    <div className="card" style={{padding:15}}>
-                        <textarea placeholder="Write your letter here..." value={letter} onChange={e => setLetter(e.target.value)} />
+
+                    {/* Letter Card with Stickers */}
+                    <div className="card letter-card"
+                        style={{ position: 'relative', overflow: 'hidden' }}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, 'letter')}
+                    >
+                        <div className="sticker-layer">
+                            {letterStickers.map(s => (
+                                <img key={s.id}
+                                    src={`assets/${s.src}`}
+                                    className="sticker-item"
+                                    style={{
+                                        left: s.x, top: s.y,
+                                        width: 50 * s.scale,
+                                        transform: `rotate(${s.rotation}deg)`
+                                    }}
+                                    onMouseDown={(e) => handleStickerDragStart(e, s.id, 'letter', s.x, s.y)}
+                                    onTouchStart={(e) => handleStickerDragStart(e, s.id, 'letter', s.x, s.y)}
+                                    onDoubleClick={() => removeSticker(s.id, 'letter')}
+                                />
+                            ))}
+                        </div>
+                        <textarea
+                            placeholder="Write your letter here..."
+                            value={letter}
+                            onChange={e => setLetter(e.target.value)}
+                            style={{ position: 'relative', zIndex: 10, background: 'transparent' }}
+                        />
                     </div>
-                    <div className="card" style={{background:'var(--red)', color:'white'}}>
+                    {renderStickerPicker('letter')}
+
+                    {/* ASCII Love Card Section */}
+                    <div className="ascii-card-container">
+                        <div className="header-cute">ASCII LOVE CARD <Icon name="heart" color="#8B0000" /> </div>
+
+                        {!showCardDesigner ? (
+                            <div>
+                                <label htmlFor="image-upload" className="image-upload-btn">
+                                    <Icon name="download" color="#8B0000" />
+                                    <span style={{ fontWeight: 'bold' }}>
+                                        {isGenerating ? 'GENERATING...' : 'UPLOAD IMAGE'}
+                                    </span>
+                                    <span style={{ fontSize: 10, opacity: 0.6 }}>
+                                        Click to add a portrait
+                                    </span>
+                                </label>
+                                <input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                {/* ASCII Controls */}
+                                <div className="ascii-controls">
+                                    <div className="control-group">
+                                        <label>Density</label>
+                                        <input className="control-slider" type="range" min="50" max="180" step="10"
+                                            value={asciiOptions.resolution}
+                                            onChange={(e) => regenerateAscii({ ...asciiOptions, resolution: parseInt(e.target.value) })} />
+                                    </div>
+                                    <div className="control-group">
+                                        <label>Contrast</label>
+                                        <input className="control-slider" type="range" min="0.5" max="3" step="0.1"
+                                            value={asciiOptions.contrast}
+                                            onChange={(e) => regenerateAscii({ ...asciiOptions, contrast: parseFloat(e.target.value) })} />
+                                    </div>
+                                    <div className="control-group">
+                                        <label>Softness</label>
+                                        <input className="control-slider" type="range" min="-50" max="50" step="5"
+                                            value={asciiOptions.brightness}
+                                            onChange={(e) => regenerateAscii({ ...asciiOptions, brightness: parseInt(e.target.value) })} />
+                                    </div>
+                                    <div className="control-group">
+                                        <label>Text</label>
+                                        <input className="control-input" type="text" placeholder="Auto (Default)"
+                                            value={asciiOptions.charset}
+                                            onChange={(e) => regenerateAscii({ ...asciiOptions, charset: e.target.value })} />
+                                    </div>
+                                </div>
+
+                                {/* Card Preview */}
+                                <div className="ascii-preview"
+                                    style={{ position: 'relative' }}
+                                    onDragOver={handleDragOver}
+                                    onDrop={(e) => handleDrop(e, 'card')}
+                                >
+                                    <div className="vintage-border"></div>
+                                    <div className="sticker-layer">
+                                        {cardStickers.map(s => (
+                                            <img key={s.id}
+                                                src={`assets/${s.src}`}
+                                                className="sticker-item"
+                                                style={{
+                                                    left: s.x, top: s.y,
+                                                    width: 50 * s.scale,
+                                                    transform: `rotate(${s.rotation}deg)`
+                                                }}
+                                                onMouseDown={(e) => handleStickerDragStart(e, s.id, 'card', s.x, s.y)}
+                                                onTouchStart={(e) => handleStickerDragStart(e, s.id, 'card', s.x, s.y)}
+                                                onDoubleClick={() => removeSticker(s.id, 'card')}
+                                            />
+                                        ))}
+                                    </div>
+                                    <textarea
+                                        className="card-text-input card-message"
+                                        placeholder="Write your love note here..."
+                                        value={cardData.message}
+                                        onChange={(e) => setCardData({ ...cardData, message: e.target.value })}
+                                        onKeyDown={(e) => { }}
+                                        style={{ position: 'relative', zIndex: 10 }}
+                                    />
+                                    <div className="ascii-art-display">{asciiArt}</div>
+                                    <input
+                                        className="card-text-input card-from"
+                                        placeholder="Your Name (your crush)"
+                                        value={cardData.from}
+                                        onChange={(e) => setCardData({ ...cardData, from: e.target.value })}
+                                        onKeyDown={(e) => { }}
+                                        style={{ position: 'relative', zIndex: 10 }}
+                                    />
+                                    <div style={{ textAlign: 'right', marginTop: 10 }}>
+                                        <Icon name="heart" color="#ff4d4d" />
+                                    </div>
+                                </div>
+
+                                {renderStickerPicker('card')}
+
+                                {/* Hidden Canvas for Export */}
+                                <canvas ref={canvasRef} className="ascii-canvas"></canvas>
+
+                                {/* Card Actions */}
+                                <div className="card-actions">
+                                    <button className="btn-card secondary" onClick={() => {
+                                        setShowCardDesigner(false);
+                                        setAsciiArt('');
+                                        setUploadedImage(null);
+                                        setCardData({ message: '', from: '', to: '' });
+                                    }}>
+                                        RESET
+                                    </button>
+                                    <button className="btn-card" onClick={() => downloadCard()}>
+                                        DOWNLOAD
+                                    </button>
+                                    <button className="btn-card" onClick={() => shareCard()}>
+                                        <Icon name="share" /> SHARE
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="card" style={{ background: 'var(--red)', color: 'white' }}>
                         {!shareFile ? (
                             <>
-                                <label style={{fontSize:10, fontWeight:'bold', display:'block', marginBottom:5}}>SET SECRET CODE</label>
-                                <input value={code} onChange={e => setCode(e.target.value)} style={{width:'80%', padding:10, borderRadius:8, border:'none', textAlign:'center', fontSize:18, marginBottom:10, textTransform:'uppercase', color:'black'}} placeholder="LOVE" />
-                                <button className="btn-action" style={{background:'white', color:'var(--red)'}} onClick={seal}>SEAL CAPSULE</button>
+                                <label style={{ fontSize: 10, fontWeight: 'bold', display: 'block', marginBottom: 5 }}>SET SECRET CODE</label>
+                                <input value={code} onChange={e => setCode(e.target.value)} style={{ width: '80%', padding: 10, borderRadius: 8, border: 'none', textAlign: 'center', fontSize: 18, marginBottom: 10, textTransform: 'uppercase', color: 'black' }} placeholder="LOVE" />
+                                <button className="btn-action" style={{ background: 'white', color: 'var(--red)' }} onClick={() => seal()}>SEAL CAPSULE</button>
                             </>
                         ) : (
                             <>
-                                <h3 style={{margin:0}}>Ready!</h3>
-                                <p style={{fontSize:12, opacity:0.8, marginBottom:10}}>Code: {code}</p>
-                                <button className="btn-action" style={{background:'white', color:'var(--red)'}} onClick={share}> <Icon name="share"/> SHARE FILE </button>
+                                <h3 style={{ margin: 0 }}>Ready!</h3>
+                                <p style={{ fontSize: 12, opacity: 0.8, marginBottom: 10 }}>Code: {code}</p>
+                                <button className="btn-action" style={{ background: 'white', color: 'var(--red)' }} onClick={() => share()}> <Icon name="share" /> SHARE FILE </button>
                                 {/* Added Safety Net Link for Android */}
-                                <button style={{background:'none', border:'none', textDecoration:'underline', color:'white', fontSize:12, marginTop:10, opacity:0.8}} onClick={triggerDownload}>
+                                <button style={{ background: 'none', border: 'none', textDecoration: 'underline', color: 'white', fontSize: 12, marginTop: 10, opacity: 0.8 }} onClick={() => triggerDownload()}>
                                     (Or click here to download file)
                                 </button>
                             </>
@@ -418,35 +1557,111 @@
                 </div>
             );
 
-            if(view === 'receive') return (
-                <div className="screen" style={{justifyContent:'center'}}>
-                    <button onClick={() => setView('home')} style={{position:'absolute', top:20, left:20, background:'none', border:'none', color:'var(--red)'}}>BACK</button>
+            if (view === 'receive') return (
+                <div className="screen" style={{ justifyContent: 'center' }}>
+                    <button onClick={() => setView('home')} style={{ position: 'absolute', top: 20, left: 20, background: 'none', border: 'none', color: 'var(--red)' }}>BACK</button>
                     <div className="card">
                         <h2>Receive</h2>
-                        <input type="file" accept=".json" onChange={upload} style={{marginBottom:20}} />
+                        <input type="file" accept=".json" onChange={upload} style={{ marginBottom: 20 }} />
                         {receivedData && (
                             <>
-                                <input value={unlockCode} onChange={e => setUnlockCode(e.target.value)} style={{width:'80%', padding:10, borderRadius:8, border:'1px solid #ccc', textAlign:'center', fontSize:18, marginBottom:10, textTransform:'uppercase'}} placeholder="ENTER CODE" />
-                                <button className="btn-action" onClick={unlock}>UNLOCK</button>
+                                <input value={unlockCode} onChange={e => setUnlockCode(e.target.value)} style={{ width: '80%', padding: 10, borderRadius: 8, border: '1px solid #ccc', textAlign: 'center', fontSize: 18, marginBottom: 10, textTransform: 'uppercase' }} placeholder="ENTER CODE" />
+                                <button className="btn-action" onClick={() => unlock()}>UNLOCK</button>
                             </>
                         )}
                     </div>
                 </div>
             );
 
-            if(view === 'read') return (
+            if (view === 'read') return (
                 <div className="screen">
-                    <button onClick={() => setView('home')} style={{marginBottom:20, background:'none', border:'none', color:'var(--red)'}}>CLOSE</button>
+                    <button onClick={() => setView('home')} style={{ marginBottom: 20, background: 'none', border: 'none', color: 'var(--red)' }}>CLOSE</button>
                     {audioBlob && (
                         <div className="card">
                             <div className="header-cute"> Incoming Voice <Icon name="music_cute" color="#8B0000" /> </div>
                             <RadioPlayer audioBlob={audioBlob} />
                         </div>
                     )}
-                    <div className="card" style={{textAlign:'left', whiteSpace:'pre-wrap'}}>
-                        {letter}
-                        <div style={{textAlign:'center', marginTop:30, color:'var(--red)'}}><Icon name="heart"/></div>
+                    <div className="card letter-card-read" style={{ textAlign: 'left', whiteSpace: 'pre-wrap', position: 'relative', overflow: 'hidden' }}>
+                        <div className="sticker-layer">
+                            {letterStickers.map(s => (
+                                <img key={s.id}
+                                    src={`assets/${s.src}`}
+                                    className="sticker-item"
+                                    style={{
+                                        left: s.x, top: s.y,
+                                        width: 50 * s.scale,
+                                        transform: `rotate(${s.rotation}deg)`
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <div style={{ position: 'relative', zIndex: 10 }}>
+                            {letter}
+                        </div>
+                        <div style={{ textAlign: 'center', marginTop: 30, color: 'var(--red)' }}><Icon name="heart" /></div>
                     </div>
+
+                    {/* Show ASCII Card if received */}
+                    {showCardDesigner && asciiArt && (
+                        <div className="ascii-card-container">
+                            <div className="header-cute">LOVE CARD <Icon name="heart" color="#8B0000" /> </div>
+                            <div className="ascii-preview" style={{ position: 'relative' }}>
+                                <div className="vintage-border"></div>
+                                <div className="sticker-layer">
+                                    {cardStickers.map(s => (
+                                        <img key={s.id}
+                                            src={`assets/${s.src}`}
+                                            className="sticker-item"
+                                            style={{
+                                                left: s.x, top: s.y,
+                                                width: 50 * s.scale,
+                                                transform: `rotate(${s.rotation}deg)`
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                                <div style={{
+                                    fontSize: 16,
+                                    color: 'var(--red)',
+                                    textAlign: 'center',
+                                    margin: '10px 0 20px 0',
+                                    fontFamily: 'Courier New',
+                                    position: 'relative', zIndex: 10
+                                }}>
+                                    {cardData.message}
+                                </div>
+                                <div className="ascii-art-display">{asciiArt}</div>
+                                <div style={{
+                                    fontSize: 14,
+                                    fontStyle: 'italic',
+                                    color: 'var(--red)',
+                                    textAlign: 'center',
+                                    margin: '20px 0 10px 0',
+                                    fontFamily: 'Courier New',
+                                    position: 'relative', zIndex: 10
+                                }}>
+                                    From, {cardData.from}
+                                </div>
+                                <div style={{ textAlign: 'right', marginTop: 10 }}>
+                                    <Icon name="heart" color="#ff4d4d" />
+                                </div>
+                            </div>
+
+                            {/* Hidden Canvas for Export */}
+                            <canvas ref={canvasRef} className="ascii-canvas"></canvas>
+
+                            {/* Card Actions */}
+                            <div className="card-actions">
+                                <button className="btn-card" onClick={downloadCard}>
+                                    DOWNLOAD CARD
+                                </button>
+                                <button className="btn-card" onClick={shareCard}>
+                                    <Icon name="share" /> SHARE CARD
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
             return null;
@@ -456,6 +1671,5 @@
         root.render(<App />);
     </script>
 </body>
+
 </html>
-
-

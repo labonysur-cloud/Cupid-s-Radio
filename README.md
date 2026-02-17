@@ -47,10 +47,22 @@ Perfect for:
 - Automatic format detection (WebM/MP4)
 - Built-in audio filters for a "vintage radio" sound effect
 
+### 🖼️ **ASCII Art Studio**
+- Convert photos into vintage text portraits
+- Customizable density, contrast, and brightness
+- create unique art using your own text/characters
+- Export as beautiful digital postcards
+
 ### 📝 **Love Letters**
 - Beautiful lined paper textarea for writing messages
 - Character-unlimited text support
 - Elegant typography with vintage styling
+
+### 🎀 **Sticker Studio**
+- Drag and drop vintage stickers onto your letters and cards
+- Customize sticker position, rotation, and size
+- Curated collection of romantic assets (hearts, cupids, roses)
+- Fully interactive touch support for mobile devices
 
 ### 🔒 **Secure Encryption**
 - XOR-based encryption for privacy
