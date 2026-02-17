@@ -35,7 +35,7 @@
 2. Click `Settings` → `Pages`
 3. Under "Branch", select `main` (or your default branch)
 4. Save
-5. Your site is now live at: `https://yourusername.github.io/Cupid-s-Radio`
+5. Your site is now live at: `https://labonysur-cloud.github.io/Cupid-s-Radio/`
 
 #### Step 2: Update Your Manifest
 In `manifest.json`, change this line:
@@ -75,7 +75,7 @@ git push origin main
 ### **Step 1: Submit to Google Search Console**
 1. Go to [Google Search Console](https://search.google.com/search-console)
 2. Click "Add Property"
-3. Enter your site: `https://yourusername.github.io/Cupid-s-Radio`
+3. Enter your site: `https://labonysur-cloud.github.io/Cupid-s-Radio/`
 4. Verify ownership (follow Google's instructions)
 5. Submit sitemap: Add `/sitemap.xml` (we'll create this)
 
@@ -85,7 +85,7 @@ Create a file called `sitemap.xml`:
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://yourusername.github.io/Cupid-s-Radio</loc>
+   <loc>https://labonysur-cloud.github.io/Cupid-s-Radio/</loc>
     <lastmod>2026-02-17</lastmod>
     <priority>1.0</priority>
   </url>
@@ -97,13 +97,13 @@ Create a file called `robots.txt`:
 ```
 User-agent: *
 Allow: /
-Sitemap: https://yourusername.github.io/Cupid-s-Radio/sitemap.xml
+Sitemap: https://labonysur-cloud.github.io/Cupid-s-Radio/sitemap.xml
 ```
 
 ### **Step 4: Wait for Google to Index**
 - Google usually indexes within **3-7 days**
 - You can request indexing in Google Search Console
-- Check status: `site:yourusername.github.io/Cupid-s-Radio` in Google Search
+- Check status: `site:labonysur-cloud.github.io/Cupid-s-Radio` in Google Search
 
 ---
 
@@ -117,9 +117,9 @@ example.com/cupid-s-radio
 
 **After (with our SEO setup):**
 ```
-🎵 Cupid's Radio - Free Love Music Streaming App
-yourusername.github.io/Cupid-s-Radio
-Stream romantic love songs and curated music playlists. Listen to beautiful romantic music anytime...
+💘 Cupid's Radio - Private Love Magazine
+labonysur-cloud.github.io/Cupid-s-Radio
+Private love magazine for sharing voice notes, letters, and images. No database, no server storage...
 ```
 
 ---
@@ -131,7 +131,7 @@ Stream romantic love songs and curated music playlists. Listen to beautiful roma
 - [x] SEO Meta Tags added
 - [x] Structured Data (JSON-LD) added
 - [ ] Deploy to GitHub Pages (do this next!)
-- [ ] Update `https://yourusername.github.io/Cupid-s-Radio` in `manifest.json`
+- [ ] Update `https://labonysur-cloud.github.io/Cupid-s-Radio/` in `manifest.json`
 - [ ] Create `sitemap.xml`
 - [ ] Create `robots.txt`
 - [ ] Submit to Google Search Console
@@ -146,7 +146,7 @@ Stream romantic love songs and curated music playlists. Listen to beautiful roma
    - This image shows when people share your link
 
 2. **Update Manifest URL**
-   - Find this in `manifest.json`: `"url": "https://yourgithub.io/Cupid-s-Radio"`
+   - Find this in `manifest.json`: `"url": "https://labonysur-cloud.github.io/Cupid-s-Radio/"`
    - Replace with your actual GitHub Pages URL
 
 3. **Track Your SEO**
@@ -180,7 +180,7 @@ Stream romantic love songs and curated music playlists. Listen to beautiful roma
 2. **To go online for free:**
    - Push to GitHub
    - Enable GitHub Pages in settings
-   - Your app is live at: `https://yourusername.github.io/Cupid-s-Radio`
+   - Your app is live at: `https://labonysur-cloud.github.io/Cupid-s-Radio/`
 
 3. **To be searchable on Google:**
    - Submit to Google Search Console

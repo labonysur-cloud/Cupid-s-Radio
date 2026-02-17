@@ -1,7 +1,7 @@
 {
-  "name": "Cupid's Radio - Love Music Streaming",
+  "name": "Cupid's Radio - Private Love Magazine",
   "short_name": "Cupid's Radio",
-  "description": "Stream romantic love songs and curated music playlists with Cupid's Radio",
+  "description": "Private love magazine for sharing voice notes, letters, and images. No database, no server storage.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fdfbf7",
@@ -33,7 +33,7 @@
       "purpose": "maskable"
     }
   ],
-  "categories": ["music", "entertainment"],
+  "categories": ["communication", "social", "lifestyle"],
   "screenshots": [
     {
       "src": "assets/logo.ico",

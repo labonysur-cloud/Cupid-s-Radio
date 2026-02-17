@@ -7,7 +7,7 @@
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge)
 
-*A romantic, secure web app for recording voice messages and love letters with encrypted sharing*
+
 
 [Live Demo](#-demo) • [Features](#-features) • [Getting Started](#-getting-started) • [Usage](#-usage) • [Technology](#-technology-stack)
 
@@ -29,7 +29,7 @@
 
 ## 📖 Overview
 
-**Cupid's Radio** is a unique Valentine's Day-themed Progressive Web Application (PWA) that combines the nostalgia of love letters with modern audio messaging. Send encrypted romantic messages to your loved ones in a beautifully designed, mobile-friendly interface with a vintage radio aesthetic.
+**Cupid's Radio** is a Valentine's Day-themed Progressive Web Application (PWA) that feels like a secret love magazine. Create voice notes, write letters, and craft image cards, then share them as encrypted files. Everything stays on your device until you decide to share it.
 
 Perfect for:
 - 💝 Valentine's Day surprises
@@ -41,16 +41,16 @@ Perfect for:
 
 ## ✨ Features
 
-### 🎙️ **Voice Recording**
-- Record audio messages directly in the browser
+### 🎙️ **Voice Notes**
+- Record voice messages directly in the browser
 - Cross-platform microphone support (iOS, Android, Desktop)
 - Automatic format detection (WebM/MP4)
-- Built-in audio filters for a "vintage radio" sound effect
+- Optional "vintage radio" audio filters
 
-### 🖼️ **ASCII Art Studio**
+### 🖼️ **Image Cards**
 - Convert photos into vintage text portraits
 - Customizable density, contrast, and brightness
-- create unique art using your own text/characters
+- Create unique art using your own text/characters
 - Export as beautiful digital postcards
 
 ### 📝 **Love Letters**
@@ -240,7 +240,7 @@ Perfect for:
 ```
 Cupid-s-Radio/
 ├── index.html          # Main application file (everything in one!)
-├── screenshot.png      # App screenshot for README
+├── cupid's radio.jpg   # App preview image
 ├── LICENSE            # Apache 2.0 License
 └── README.md          # This file
 ```
