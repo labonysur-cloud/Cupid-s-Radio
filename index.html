@@ -668,44 +668,70 @@
             return decoder.decode(decrypted);
         };
 
-        // --- CUTE TYPING SOUND EFFECT ---
+        // --- TYPEWRITER SOUND EFFECT ---
         const playTypingSound = () => {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioContext();
                 
-                // Generate a cute, light "click" sound
                 const now = ctx.currentTime;
-                const duration = 0.05; // Very short, cute sound
+                const duration = 0.08; // Typewriter key duration
                 
-                // Create oscillator for a cute beep
-                const osc = ctx.createOscillator();
+                // Create noise buffer for mechanical click
+                const bufferSize = ctx.sampleRate * duration;
+                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                
+                // Generate vintage typewriter noise (filtered white noise)
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1; // White noise
+                }
+                
+                // Create noise source
+                const noiseSource = ctx.createBufferSource();
+                noiseSource.buffer = noiseBuffer;
+                
+                // Create highpass filter for crisp mechanical sound
+                const highpass = ctx.createBiquadFilter();
+                highpass.type = 'highpass';
+                highpass.frequency.value = 4000;
+                highpass.Q.value = 1;
+                
+                // Create lowpass filter to avoid harshness
+                const lowpass = ctx.createBiquadFilter();
+                lowpass.type = 'lowpass';
+                lowpass.frequency.value = 12000;
+                
+                // Gain envelope for typewriter "strike" effect
                 const gain = ctx.createGain();
-                const filter = ctx.createBiquadFilter();
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.02, now + duration);
                 
-                // Randomly vary pitch slightly for variety
-                const pitchVariation = 1 + (Math.random() - 0.5) * 0.2;
-                osc.frequency.value = 800 * pitchVariation; // Cute high-pitched sound
-                osc.type = 'sine';
+                // Add a secondary "key release" click with oscillator
+                const osc = ctx.createOscillator();
+                osc.frequency.value = 150 + Math.random() * 50; // Low mechanical frequency
+                osc.type = 'triangle';
                 
-                // Soft lowpass filter for a gentler sound
-                filter.type = 'lowpass';
-                filter.frequency.value = 1200;
+                const oscGain = ctx.createGain();
+                oscGain.gain.setValueAtTime(0.1, now);
+                oscGain.gain.exponentialRampToValueAtTime(0.01, now + duration * 0.5);
                 
-                // Quick envelope - attack and decay
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                // Connect nodes
+                noiseSource.connect(highpass);
+                highpass.connect(lowpass);
+                lowpass.connect(gain);
                 
-                // Connect and play
-                osc.connect(filter);
-                filter.connect(gain);
+                osc.connect(oscGain);
+                oscGain.connect(gain);
+                
                 gain.connect(ctx.destination);
                 
+                // Start sounds
+                noiseSource.start(now);
                 osc.start(now);
-                osc.stop(now + duration);
+                osc.stop(now + duration * 0.5);
             } catch (e) {
-                // Silently fail if Web Audio API is unavailable
-                console.log("Typing sound unavailable");
+                console.log("Typewriter sound unavailable");
             }
         };
 
