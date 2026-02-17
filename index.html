@@ -668,70 +668,84 @@
             return decoder.decode(decrypted);
         };
 
-        // --- TYPEWRITER SOUND EFFECT ---
+        // --- NATURAL KEYBOARD TYPING SOUND EFFECT ---
         const playTypingSound = () => {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioContext();
                 
                 const now = ctx.currentTime;
-                const duration = 0.08; // Typewriter key duration
+                const duration = 0.12; // Natural key press duration
                 
-                // Create noise buffer for mechanical click
-                const bufferSize = ctx.sampleRate * duration;
-                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const output = noiseBuffer.getChannelData(0);
+                // Layer 1: Mechanical click (high-frequency white noise)
+                const clickBufferSize = ctx.sampleRate * 0.05;
+                const clickBuffer = ctx.createBuffer(1, clickBufferSize, ctx.sampleRate);
+                const clickOutput = clickBuffer.getChannelData(0);
                 
-                // Generate vintage typewriter noise (filtered white noise)
-                for (let i = 0; i < bufferSize; i++) {
-                    output[i] = Math.random() * 2 - 1; // White noise
+                for (let i = 0; i < clickBufferSize; i++) {
+                    clickOutput[i] = (Math.random() * 2 - 1) * 0.6;
                 }
                 
-                // Create noise source
-                const noiseSource = ctx.createBufferSource();
-                noiseSource.buffer = noiseBuffer;
+                const clickSource = ctx.createBufferSource();
+                clickSource.buffer = clickBuffer;
                 
-                // Create highpass filter for crisp mechanical sound
-                const highpass = ctx.createBiquadFilter();
-                highpass.type = 'highpass';
-                highpass.frequency.value = 4000;
-                highpass.Q.value = 1;
+                // Filter for click - bright but not harsh
+                const clickFilter = ctx.createBiquadFilter();
+                clickFilter.type = 'highpass';
+                clickFilter.frequency.value = 6000;
                 
-                // Create lowpass filter to avoid harshness
-                const lowpass = ctx.createBiquadFilter();
-                lowpass.type = 'lowpass';
-                lowpass.frequency.value = 12000;
+                const clickGain = ctx.createGain();
+                clickGain.gain.setValueAtTime(0.25, now);
+                clickGain.gain.exponentialRampToValueAtTime(0.05, now + 0.05);
                 
-                // Gain envelope for typewriter "strike" effect
-                const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.02, now + duration);
+                clickSource.connect(clickFilter);
+                clickFilter.connect(clickGain);
+                clickGain.connect(ctx.destination);
                 
-                // Add a secondary "key release" click with oscillator
-                const osc = ctx.createOscillator();
-                osc.frequency.value = 150 + Math.random() * 50; // Low mechanical frequency
-                osc.type = 'triangle';
+                // Layer 2: Warm resonance tone (soft key press tone)
+                const osc1 = ctx.createOscillator();
+                osc1.type = 'sine';
+                osc1.frequency.value = 250 + Math.random() * 30; // Warm low tone
                 
-                const oscGain = ctx.createGain();
-                oscGain.gain.setValueAtTime(0.1, now);
-                oscGain.gain.exponentialRampToValueAtTime(0.01, now + duration * 0.5);
+                const osc1Gain = ctx.createGain();
+                osc1Gain.gain.setValueAtTime(0, now);
+                osc1Gain.gain.linearRampToValueAtTime(0.08, now + 0.02);
+                osc1Gain.gain.exponentialRampToValueAtTime(0.02, now + duration);
                 
-                // Connect nodes
-                noiseSource.connect(highpass);
-                highpass.connect(lowpass);
-                lowpass.connect(gain);
+                // Layer 3: Bright pluck-like tone
+                const osc2 = ctx.createOscillator();
+                osc2.type = 'sine';
+                osc2.frequency.value = 800 + Math.random() * 100; // Bright tone
                 
-                osc.connect(oscGain);
-                oscGain.connect(gain);
+                const osc2Gain = ctx.createGain();
+                osc2Gain.gain.setValueAtTime(0, now);
+                osc2Gain.gain.linearRampToValueAtTime(0.06, now + 0.015);
+                osc2Gain.gain.exponentialRampToValueAtTime(0.01, now + duration * 0.6);
                 
-                gain.connect(ctx.destination);
+                // Overall output filter for warmth
+                const outputFilter = ctx.createBiquadFilter();
+                outputFilter.type = 'lowpass';
+                outputFilter.frequency.value = 8000;
+                outputFilter.Q.value = 0.7;
                 
-                // Start sounds
-                noiseSource.start(now);
-                osc.start(now);
-                osc.stop(now + duration * 0.5);
+                // Connect all layers
+                osc1.connect(osc1Gain);
+                osc1Gain.connect(outputFilter);
+                
+                osc2.connect(osc2Gain);
+                osc2Gain.connect(outputFilter);
+                
+                outputFilter.connect(ctx.destination);
+                
+                // Start all sounds
+                clickSource.start(now);
+                osc1.start(now);
+                osc2.start(now);
+                
+                osc1.stop(now + duration);
+                osc2.stop(now + duration);
             } catch (e) {
-                console.log("Typewriter sound unavailable");
+                console.log("Keyboard typing sound unavailable");
             }
         };
 
