@@ -668,84 +668,135 @@
             return decoder.decode(decrypted);
         };
 
-        // --- NATURAL KEYBOARD TYPING SOUND EFFECT ---
-        const playTypingSound = () => {
+        // --- KEYBOARD SOUND EFFECTS ---
+        const playTypingSound = (type = 'mechanical') => {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioContext();
-                
                 const now = ctx.currentTime;
-                const duration = 0.12; // Natural key press duration
                 
-                // Layer 1: Mechanical click (high-frequency white noise)
-                const clickBufferSize = ctx.sampleRate * 0.05;
-                const clickBuffer = ctx.createBuffer(1, clickBufferSize, ctx.sampleRate);
-                const clickOutput = clickBuffer.getChannelData(0);
-                
-                for (let i = 0; i < clickBufferSize; i++) {
-                    clickOutput[i] = (Math.random() * 2 - 1) * 0.6;
+                if (type === 'mechanical') {
+                    // MECHANICAL KEYBOARD: Sharp, rhythmic clicks for productivity
+                    const duration = 0.08;
+                    
+                    // High-frequency click (crisp)
+                    const clickBufferSize = ctx.sampleRate * 0.04;
+                    const clickBuffer = ctx.createBuffer(1, clickBufferSize, ctx.sampleRate);
+                    const clickOutput = clickBuffer.getChannelData(0);
+                    
+                    for (let i = 0; i < clickBufferSize; i++) {
+                        clickOutput[i] = (Math.random() * 2 - 1) * 0.8;
+                    }
+                    
+                    const clickSource = ctx.createBufferSource();
+                    clickSource.buffer = clickBuffer;
+                    
+                    const clickFilter = ctx.createBiquadFilter();
+                    clickFilter.type = 'highpass';
+                    clickFilter.frequency.value = 7000;
+                    clickFilter.Q.value = 1.5;
+                    
+                    const clickGain = ctx.createGain();
+                    clickGain.gain.setValueAtTime(0.35, now);
+                    clickGain.gain.exponentialRampToValueAtTime(0.08, now + 0.04);
+                    
+                    // Bright metallic tone
+                    const osc = ctx.createOscillator();
+                    osc.type = 'square';
+                    osc.frequency.value = 1200 + Math.random() * 150;
+                    
+                    const oscGain = ctx.createGain();
+                    oscGain.gain.setValueAtTime(0, now);
+                    oscGain.gain.linearRampToValueAtTime(0.12, now + 0.01);
+                    oscGain.gain.exponentialRampToValueAtTime(0.02, now + duration * 0.7);
+                    
+                    // Master output
+                    const masterGain = ctx.createGain();
+                    masterGain.gain.value = 0.8;
+                    
+                    clickSource.connect(clickFilter);
+                    clickFilter.connect(clickGain);
+                    clickGain.connect(masterGain);
+                    
+                    osc.connect(oscGain);
+                    oscGain.connect(masterGain);
+                    
+                    masterGain.connect(ctx.destination);
+                    
+                    clickSource.start(now);
+                    osc.start(now);
+                    osc.stop(now + duration);
+                    
+                } else if (type === 'vintage') {
+                    // VINTAGE TYPEWRITER: Nostalgic, heavy mechanical clicks
+                    const duration = 0.15;
+                    
+                    // Heavy mechanical noise
+                    const noiseBufferSize = ctx.sampleRate * 0.08;
+                    const noiseBuffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
+                    const noiseOutput = noiseBuffer.getChannelData(0);
+                    
+                    for (let i = 0; i < noiseBufferSize; i++) {
+                        noiseOutput[i] = (Math.random() * 2 - 1) * 0.7;
+                    }
+                    
+                    const noiseSource = ctx.createBufferSource();
+                    noiseSource.buffer = noiseBuffer;
+                    
+                    // Lower frequency for vintage heaviness
+                    const noiseFilter = ctx.createBiquadFilter();
+                    noiseFilter.type = 'bandpass';
+                    noiseFilter.frequency.value = 3500;
+                    noiseFilter.Q.value = 0.8;
+                    
+                    const noiseGain = ctx.createGain();
+                    noiseGain.gain.setValueAtTime(0.4, now);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.05, now + 0.08);
+                    
+                    // Low resonant tone (heavy key strike)
+                    const osc1 = ctx.createOscillator();
+                    osc1.type = 'sine';
+                    osc1.frequency.value = 180 + Math.random() * 40;
+                    
+                    const osc1Gain = ctx.createGain();
+                    osc1Gain.gain.setValueAtTime(0, now);
+                    osc1Gain.gain.linearRampToValueAtTime(0.15, now + 0.02);
+                    osc1Gain.gain.exponentialRampToValueAtTime(0.02, now + duration * 0.6);
+                    
+                    // Mid-range tone (mechanical bell-like quality)
+                    const osc2 = ctx.createOscillator();
+                    osc2.type = 'triangle';
+                    osc2.frequency.value = 450 + Math.random() * 60;
+                    
+                    const osc2Gain = ctx.createGain();
+                    osc2Gain.gain.setValueAtTime(0, now);
+                    osc2Gain.gain.linearRampToValueAtTime(0.1, now + 0.015);
+                    osc2Gain.gain.exponentialRampToValueAtTime(0.01, now + duration * 0.5);
+                    
+                    const masterGain = ctx.createGain();
+                    masterGain.gain.value = 0.9;
+                    
+                    noiseSource.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(masterGain);
+                    
+                    osc1.connect(osc1Gain);
+                    osc1Gain.connect(masterGain);
+                    
+                    osc2.connect(osc2Gain);
+                    osc2Gain.connect(masterGain);
+                    
+                    masterGain.connect(ctx.destination);
+                    
+                    noiseSource.start(now);
+                    osc1.start(now);
+                    osc2.start(now);
+                    
+                    osc1.stop(now + duration);
+                    osc2.stop(now + duration);
                 }
-                
-                const clickSource = ctx.createBufferSource();
-                clickSource.buffer = clickBuffer;
-                
-                // Filter for click - bright but not harsh
-                const clickFilter = ctx.createBiquadFilter();
-                clickFilter.type = 'highpass';
-                clickFilter.frequency.value = 6000;
-                
-                const clickGain = ctx.createGain();
-                clickGain.gain.setValueAtTime(0.25, now);
-                clickGain.gain.exponentialRampToValueAtTime(0.05, now + 0.05);
-                
-                clickSource.connect(clickFilter);
-                clickFilter.connect(clickGain);
-                clickGain.connect(ctx.destination);
-                
-                // Layer 2: Warm resonance tone (soft key press tone)
-                const osc1 = ctx.createOscillator();
-                osc1.type = 'sine';
-                osc1.frequency.value = 250 + Math.random() * 30; // Warm low tone
-                
-                const osc1Gain = ctx.createGain();
-                osc1Gain.gain.setValueAtTime(0, now);
-                osc1Gain.gain.linearRampToValueAtTime(0.08, now + 0.02);
-                osc1Gain.gain.exponentialRampToValueAtTime(0.02, now + duration);
-                
-                // Layer 3: Bright pluck-like tone
-                const osc2 = ctx.createOscillator();
-                osc2.type = 'sine';
-                osc2.frequency.value = 800 + Math.random() * 100; // Bright tone
-                
-                const osc2Gain = ctx.createGain();
-                osc2Gain.gain.setValueAtTime(0, now);
-                osc2Gain.gain.linearRampToValueAtTime(0.06, now + 0.015);
-                osc2Gain.gain.exponentialRampToValueAtTime(0.01, now + duration * 0.6);
-                
-                // Overall output filter for warmth
-                const outputFilter = ctx.createBiquadFilter();
-                outputFilter.type = 'lowpass';
-                outputFilter.frequency.value = 8000;
-                outputFilter.Q.value = 0.7;
-                
-                // Connect all layers
-                osc1.connect(osc1Gain);
-                osc1Gain.connect(outputFilter);
-                
-                osc2.connect(osc2Gain);
-                osc2Gain.connect(outputFilter);
-                
-                outputFilter.connect(ctx.destination);
-                
-                // Start all sounds
-                clickSource.start(now);
-                osc1.start(now);
-                osc2.start(now);
-                
-                osc1.stop(now + duration);
-                osc2.stop(now + duration);
             } catch (e) {
-                console.log("Keyboard typing sound unavailable");
+                console.log("Keyboard sound unavailable");
             }
         };
 
@@ -941,6 +992,9 @@
             });
             const [isGenerating, setIsGenerating] = useState(false);
             const canvasRef = useRef(null);
+
+            // Sound effect preference
+            const [soundType, setSoundType] = useState('mechanical'); // 'mechanical' or 'vintage'
 
             // Sticker State
             const [dragState, setDragState] = useState(null); // { id, type, startX, startY, initialX, initialY }
@@ -1416,6 +1470,47 @@
                         <div style={{ color: 'var(--red)', marginBottom: 10 }}><Icon name="heart" /></div>
                         <h1 style={{ margin: 0, fontSize: 24 }}>Cupid's Radio</h1>
                         <p style={{ fontSize: 12, opacity: 0.6 }}>SECURE FREQUENCY</p>
+                        
+                        {/* Sound Settings */}
+                        <div style={{ marginTop: 15, padding: '10px', background: 'rgba(139, 0, 0, 0.05)', borderRadius: 8, border: '1px solid rgba(139, 0, 0, 0.1)' }}>
+                            <p style={{ fontSize: 11, fontWeight: 'bold', margin: '0 0 8px 0', textTransform: 'uppercase' }}>Typing Sound</p>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                                <button 
+                                    onClick={() => setSoundType('mechanical')}
+                                    style={{
+                                        flex: 1,
+                                        padding: '8px 12px',
+                                        borderRadius: 6,
+                                        border: soundType === 'mechanical' ? '2px solid var(--red)' : '2px solid rgba(139, 0, 0, 0.2)',
+                                        background: soundType === 'mechanical' ? 'var(--red)' : 'white',
+                                        color: soundType === 'mechanical' ? 'white' : 'var(--red)',
+                                        cursor: 'pointer',
+                                        fontSize: 11,
+                                        fontWeight: 'bold',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    🎮 MECHANICAL
+                                </button>
+                                <button 
+                                    onClick={() => setSoundType('vintage')}
+                                    style={{
+                                        flex: 1,
+                                        padding: '8px 12px',
+                                        borderRadius: 6,
+                                        border: soundType === 'vintage' ? '2px solid var(--red)' : '2px solid rgba(139, 0, 0, 0.2)',
+                                        background: soundType === 'vintage' ? 'var(--red)' : 'white',
+                                        color: soundType === 'vintage' ? 'white' : 'var(--red)',
+                                        cursor: 'pointer',
+                                        fontSize: 11,
+                                        fontWeight: 'bold',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    📜 VINTAGE
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <button className="btn-action" onClick={() => setView('create')}> <Icon name="mic" /> Record Signal </button>
                     <div style={{ height: 15 }}></div>
@@ -1487,7 +1582,7 @@
                             placeholder="Write your letter here..."
                             value={letter}
                             onChange={e => setLetter(e.target.value)}
-                            onKeyDown={() => playTypingSound()}
+                            onKeyDown={() => playTypingSound(soundType)}
                             style={{ position: 'relative', zIndex: 10, background: 'transparent' }}
                         />
                     </div>
@@ -1574,7 +1669,7 @@
                                         placeholder="Write your love note here..."
                                         value={cardData.message}
                                         onChange={(e) => setCardData({ ...cardData, message: e.target.value })}
-                                        onKeyDown={() => playTypingSound()}
+                                        onKeyDown={() => playTypingSound(soundType)}
                                         style={{ position: 'relative', zIndex: 10 }}
                                     />
                                     <div className="ascii-art-display">{asciiArt}</div>
@@ -1583,7 +1678,7 @@
                                         placeholder="Your Name (your crush)"
                                         value={cardData.from}
                                         onChange={(e) => setCardData({ ...cardData, from: e.target.value })}
-                                        onKeyDown={() => playTypingSound()}
+                                        onKeyDown={() => playTypingSound(soundType)}
                                         style={{ position: 'relative', zIndex: 10 }}
                                     />
                                     <div style={{ textAlign: 'right', marginTop: 10 }}>
