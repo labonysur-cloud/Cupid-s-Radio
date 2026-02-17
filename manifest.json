@@ -1,0 +1,46 @@
+{
+  "name": "Cupid's Radio - Love Music Streaming",
+  "short_name": "Cupid's Radio",
+  "description": "Stream romantic love songs and curated music playlists with Cupid's Radio",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fdfbf7",
+  "theme_color": "#8B0000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/logo.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.ico",
+      "sizes": "512x512",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/logo.ico",
+      "sizes": "512x512",
+      "type": "image/x-icon",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "screenshots": [
+    {
+      "src": "assets/logo.ico",
+      "sizes": "540x720",
+      "type": "image/x-icon",
+      "form_factor": "narrow",
+      "purpose": "any"
+    }
+  ]
+}

@@ -4,8 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cupid's Radio</title>
+    <title>Cupid's Radio - Free Love Music Streaming App</title>
+    <meta name="description" content="Stream romantic love songs and curated music playlists. Listen to beautiful romantic music anytime, anywhere - completely free!">
+    <meta name="keywords" content="love music, romantic songs, music streaming, cupid radio, love songs app, background music">
+    <meta name="author" content="Cupid's Radio">
+    <meta name="theme-color" content="#8B0000">
+    
+    <!-- Open Graph for social sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cupid's Radio - Free Love Music Streaming">
+    <meta property="og:description" content="Stream romantic love songs and curated music playlists. Listen to beautiful romantic music anytime, anywhere - completely free!">
+    <meta property="og:image" content="assets/cupids-radio.jpg">
+    <meta property="og:site_name" content="Cupid's Radio">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cupid's Radio - Free Love Music Streaming">
+    <meta name="twitter:description" content="Stream romantic love songs and curated music playlists - completely free!">
+    <meta name="twitter:image" content="assets/cupids-radio.jpg">
+    
+    <!-- Favicon & Icons -->
     <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/logo.ico">
+    
+    <!-- PWA & App Capabilities -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cupid's Radio">
 
     <!-- React & ReactDOM -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
@@ -1854,6 +1880,41 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+    </script>
+
+    <!-- Structured Data for Google Search -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org/",
+        "@type": "WebApplication",
+        "name": "Cupid's Radio",
+        "description": "Stream romantic love songs and curated music playlists. Listen to beautiful romantic music anytime, anywhere - completely free!",
+        "url": "https://yourgithub.io/Cupid-s-Radio",
+        "applicationCategory": "EntertainmentApplication",
+        "image": "assets/cupids-radio.jpg",
+        "author": {
+            "@type": "Organization",
+            "name": "Cupid's Radio"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('✓ Service Worker registered:', registration);
+                })
+                .catch(error => {
+                    console.log('✗ Service Worker registration failed:', error);
+                });
+        }
     </script>
 </body>
 
